@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CallerId</string>
+    <string name="last_call_2_days_ago">Last call 2 days ago</string>
+</resources>

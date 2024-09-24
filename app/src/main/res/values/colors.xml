@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#229ff2</color>
+    <color name="colorPrimaryVariant">#229ff2</color>
+    <color name="colorOnPrimary">#ffffff</color>
+    <color name="colorPrimarylite">#C1E2F8</color>
+
+    <color name="light_transparent">#16000000</color>
+    <color name="chip_green_color">#A1C298</color>
+    <color name="list_color">#80D9D9D9</color>
+    <color name="list_color2">#D9D9D9</color>
+    <color name="bg">#EBF0F4</color>
+    <color name="black">#000000</color>
+    <color name="bgTransWhite">#40FFFFFF</color>
+    <color name="bgTrans">#00000000</color>
+    <color name="bgTransHalf">#80000000</color>
+    <color name="white">#ffffff</color>
+    <color name="whatsapp">#25D366</color>
+    <color name="green">#49A97B</color>
+    <color name="red">#e74c3c</color>
+    <color name="light_red">#E97777</color>
+    <color name="pink">#ff97cc</color>
+    <color name="lineNormal">#eaeaea</color>
+
+    <color name="icDark">#646464</color>
+    <color name="txLight">#646464</color>
+    <color name="txRegular">#909090</color>
+    <color name="txNormal">#646464</color>
+    <color name="txDark">#383838</color>
+    <color name="txHint">#c4c4c4</color>
+
+    <color name="orange">#FF5722</color>
+    <color name="blue">#03A9F4</color>
+    <color name="violet">#6A1B9A</color>
+    <color name="gold">#FFC107</color>
+    <color name="my_tint_color">#124EE9</color>
+
+</resources>

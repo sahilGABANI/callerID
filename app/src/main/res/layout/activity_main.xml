@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layCons"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<!--
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/token"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="ENTER TOKEN - TODO: REMOVE - FOR TESTING PURPOSE ONLY"
+        android:textColor="@color/blue"
+        android:textSize="20sp" />
+-->
+
+<!--
+    <EditText
+        android:id="@+id/token"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/round_edittext"
+        android:hint="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzY2MywiaWF0IjoxNjUzNTQ0MTQyLCJleHAiOjE2NTYxMzYxNDJ9.yMbmp3ZRSrrs-xmiayo600QTB2bDtgvas8yb3igUstg"
+        android:inputType="textMultiLine"
+        android:padding="10dp" />
+
+    <Button
+        android:id="@+id/update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/token"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/roundpink"
+        android:text="Update Token" />
+-->
+
+
+</RelativeLayout>

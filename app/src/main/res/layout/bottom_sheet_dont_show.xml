@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/rounded_white_bg_5dp_top_corner">
+
+
+
+
+    <LinearLayout
+        android:id="@+id/lytFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnDontShow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_below="@id/datetimelay"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:layout_toLeftOf="@id/savetask"
+            android:background="@drawable/round_edittext"
+            android:backgroundTint="@color/list_color2"
+            android:padding="5dp"
+            android:text="Don't show"
+            android:textColor="@color/black" />
+
+    </LinearLayout>
+</RelativeLayout>

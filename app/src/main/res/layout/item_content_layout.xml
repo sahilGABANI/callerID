@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/_10sdp"
+    android:layout_marginTop="3dp"
+    android:layout_marginRight="@dimen/_10sdp"
+    android:layout_marginBottom="3dp"
+    android:background="@drawable/round_edittext">
+
+    <TextView
+        android:id="@+id/contentdesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_toLeftOf="@id/icWhatsapp"
+        android:fontFamily="@font/gilroy_bold"
+        android:maxLines="2"
+        android:paddingLeft="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
+        android:text="Sample Description"
+        android:textColor="#000"
+        android:textStyle="bold" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipRemind"
+        style="@style/Widget.MaterialComponents.Chip.Entry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/contenttype"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toLeftOf="@id/icWhatsapp"
+        android:theme="@style/Theme.MaterialComponents.Light"
+        app:chipSpacing="6dp"
+        app:singleLine="true"
+
+        app:singleSelection="false">
+
+        <com.google.android.material.chip.Chip
+
+            android:id="@+id/typecontent"
+            style="@style/chipNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"
+            android:checkable="false"
+            android:fontFamily="@font/gilroy_medium"
+            android:text="PAGE"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:chipBackgroundColor="@color/red" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/tag1"
+            style="@style/chipNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"
+            android:checkable="false"
+            android:fontFamily="@font/gilroy_medium"
+            android:text="5 min"
+            android:textColor="@color/txDark"
+            android:textSize="12sp"
+            app:chipBackgroundColor="@color/chip_green_color" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/tag2"
+            style="@style/chipNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"
+            android:checkable="false"
+            android:fontFamily="@font/gilroy_medium"
+            android:text="5 min"
+            android:textColor="@color/txDark"
+            android:textSize="12sp"
+            app:chipBackgroundColor="@color/chip_green_color" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/tag3"
+            style="@style/chipNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"
+            android:checkable="false"
+            android:fontFamily="@font/gilroy_medium"
+            android:text="5 min"
+            android:textColor="@color/txDark"
+            android:textSize="12sp"
+            app:chipBackgroundColor="@color/chip_green_color" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <TextView
+        android:id="@+id/contenttype"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/contentdesc"
+        android:layout_toLeftOf="@id/icWhatsapp"
+        android:fontFamily="@font/gilroy_medium"
+        android:maxLines="2"
+        android:paddingLeft="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
+        android:text="Sample Description"
+        android:textColor="#000" />
+
+    <ImageView
+        android:id="@+id/icWhatsapp"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_toLeftOf="@id/icMessage"
+        android:padding="2dp"
+        android:src="@drawable/ic_whatsapp" />
+
+    <ImageView
+        android:id="@+id/icMessage"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="4dp"
+        android:padding="2dp"
+        android:src="@drawable/ic_baseline_chat_bubble_24"
+        android:tint="@color/blue" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/chipRemind"
+        android:layout_marginTop="-20dp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/timeview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Created date"
+            android:textSize="@dimen/_9sdp"
+            android:fontFamily="@font/gilroy_regular"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:textColor="@color/txLight" />
+
+        <TextView
+            android:id="@+id/creator_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginBottom="3dp"
+            android:text="Created name"
+            android:visibility="gone"
+            android:textSize="@dimen/_9sdp"
+            android:textColor="@color/txLight" />
+
+    </LinearLayout>
+</RelativeLayout>

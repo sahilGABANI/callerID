@@ -1,0 +1,23 @@
+{
+  "Version": "1.0",
+  "CredentialsProvider": {
+    "CognitoIdentity": {
+      "Default": {
+        "PoolId": "ap-southeast-2:502d9f7e-c23a-4f29-9d4a-6990303f68b3",
+        "Region": "ap-southeast-2"
+      }
+    }
+  },
+  "IdentityManager": {
+    "Default": {
+      "PoolId": "ap-southeast-2_4TvpKrF9O",
+      "Region": "ap-southeast-2"
+    }
+  },
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "mooveall-production",
+      "Region": "ap-southeast-2"
+    }
+  }
+}

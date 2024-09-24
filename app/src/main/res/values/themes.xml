@@ -1,0 +1,59 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="CalledIdTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+    <!--   <item name="colorOnPrimary">@color/colorOnPrimary</item> -->
+        <item name="android:textColorPrimary">@color/txDark</item>
+        <item name="android:textColor">@color/txDark</item>
+
+        <item name="colorSecondary">@color/colorPrimary</item>
+        <item name="colorSecondaryVariant">@color/colorPrimaryVariant</item>
+        <item name="android:textSize">12sp</item>
+    <!--    <item name="colorOnSecondary">@color/colorOnPrimary</item> -->
+
+        <item name="android:statusBarColor" tools:targetApi="l">@color/colorPrimaryVariant</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="colorSurface">@color/white</item>
+    </style>
+
+    <style name="my_time_picker_style">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="chipNormal">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:checkable">false</item>
+        <item name="android:textAlignment">center</item>
+        <item name="fontFamily">@font/gilroy_bold</item>
+        <item name="rippleColor">@null</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+    </style>
+
+    <style name="chipChecked">
+        <item name="chipBackgroundColor">@drawable/chip_selector</item>
+        <item name="android:textColor">@drawable/tx_selector</item>
+        <item name="android:checkable">true</item>
+        <item name="checkedIcon">@drawable/ic_checked</item>
+        <item name="chipStrokeColor">@color/colorPrimary</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textAlignment">center</item>
+
+        <item name="fontFamily">@font/gilroy_bold</item>
+        <item name="rippleColor">@null</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+    </style>
+
+    <style name="txBtmNav">
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:drawablePadding">2dp</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/icDark</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+</resources>
