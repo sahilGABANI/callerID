@@ -210,7 +210,7 @@ public class OverlayWindow<lytEdit> {
     ArrayList<TaskModel> tasklist = new ArrayList<>();
     ArrayList<NoteModel> notelist = new ArrayList<>();
     ArrayList<String> labelList = new ArrayList<>();
-    TextView nulllay,EmptyMessageForTask;
+    TextView nulllay,EmptyMessageForTask,EmptyMessageForTime;
     Spinner contentSpinner;
 
     ArrayList<ContentModel> contentlist = new ArrayList<>();
@@ -275,6 +275,7 @@ public class OverlayWindow<lytEdit> {
             txInfo = view.findViewById(R.id.txInfo);
             nulllay = view.findViewById(R.id.nulllay);
             EmptyMessageForTask = view.findViewById(R.id.EmptyMessageForTask);
+            EmptyMessageForTime = view.findViewById(R.id.EmptyMessageForTime);
             chipInfo = view.findViewById(R.id.chipInfo);
             chipPopUp = view.findViewById(R.id.chip);
 //            chipStatus = view.findViewById(R.id.chipStatus);
@@ -1961,14 +1962,20 @@ public class OverlayWindow<lytEdit> {
                         hideSuccess();
                         if (rm.isSuccess() && rm.getStatus() == 200 && rm.getData().size() > 0) {
                             setActivity(rm.getData());
-
+                            EmptyMessageForTime.setVisibility(View.GONE);
+                            activity_views.setVisibility(View.VISIBLE);
                             chipRemind.setVisibility(View.VISIBLE);
                             txStatus.setVisibility(View.VISIBLE);
                             lytEdit.setVisibility(View.VISIBLE);
 
                         } else {
-                            nulllay.setVisibility(View.VISIBLE);
-                            nulllay.setText("No Activity Found");
+                            activitylist = new ArrayList<>();
+                            activityAdapter = new ActivityAdapter(context, activitylist);
+                            activity_views.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+                            activity_views.setAdapter(activityAdapter);
+                            activity_views.setVisibility(View.INVISIBLE);
+                            EmptyMessageForTime.setVisibility(View.VISIBLE);
+                            EmptyMessageForTime.setText("No Activity Found");
                         }
                     }
 
@@ -2873,33 +2880,84 @@ public class OverlayWindow<lytEdit> {
         if (!cm.getLabel().isEmpty()) {
             txtEditLabel.setText(cm.getLabel().get(0));
         }
-
         for (String s : strStatus) {
+            boolean matchFound = false;  // To track if a match is found
+
             for (StatusModel s1 : callModel.getUserPreference().getUser_status()) {
+                // Compare with StatusModel's name and value
                 if (s.equalsIgnoreCase(s1.getValue()) || s.equalsIgnoreCase(s1.getName())) {
-                    Log.i("OverlayWindow", "s:" + s + "s1.getValue() :" + s1.getValue());
+                    Log.i("OverlayWindow", "s: " + s + " s1.getValue(): " + s1.getValue());
+
+                    // Create a new label model based on the matched status
                     LabelModel labelModel = new LabelModel("", "", "");
                     labelModel.setColor(s1.getColor());
+                    txtEditStatus.setText(s1.getName());
                     labelModel.setName(s1.getName());
                     labelList.add(labelModel);
+
+                    // Add the label to the pop-up
                     addLabelChipForPopUp(labelList);
+
+                    // Mark that a match was found
+                    matchFound = true;
+                    break;  // Exit inner loop when a match is found
                 }
+            }
+
+            // If no match is found, add a custom label
+            if (!matchFound) {
+                Log.i("OverlayWindow", "Custom label added for: " + s);
+
+                LabelModel customLabelModel = new LabelModel("", "", "");
+                customLabelModel.setColor("#FFFF1800");  // Custom color, modify as needed
+                customLabelModel.setName(s.replace("_"," "));  // Customize the name
+                txtEditStatus.setText(s.replace("_"," "));  // Optionally update the status display
+                labelList.add(customLabelModel);
+
+                // Add the custom label to the pop-up
+                addLabelChipForPopUp(labelList);
             }
         }
 
 
         for (String s : strLabels) {
+            boolean matchFound = false;  // Track if a match is found for each label
+
             for (LabelModel s1 : callModel.getUserPreference().getUser_Label()) {
+                // Compare with LabelModel's name and value
                 if (s.equalsIgnoreCase(s1.getValue()) || s.equalsIgnoreCase(s1.getName())) {
-                    Log.i("OverlayWindow", "s:" + s + "s1.getValue() :" + s1.getValue());
+                    Log.i("OverlayWindow", "s: " + s + " s1.getValue(): " + s1.getValue());
+
+                    // Create a new label model based on the matched label
                     LabelModel labelModel = new LabelModel("", "", "");
                     labelModel.setColor(s1.getColor());
-                    labelModel.setName(s1.getName());
+                    labelModel.setName(s);  // Use the name from strLabels
                     labelList.add(labelModel);
+
+                    // Add the label to the pop-up
                     addLabelChipForPopUp(labelList);
+
+                    // Mark that a match was found
+                    matchFound = true;
+                    break;  // Exit the inner loop when a match is found
                 }
             }
+
+            // If no match is found, add a custom label
+            if (!matchFound) {
+                Log.i("OverlayWindow", "Custom label added for: " + s);
+
+                // Create a custom label model with default or custom properties
+                LabelModel customLabelModel = new LabelModel("", "", "");
+                customLabelModel.setColor("#FF00FF5F");  // Custom color (e.g., red), modify as needed
+                customLabelModel.setName(s.replace("_", " "));  // Custom label name
+                labelList.add(customLabelModel);
+
+                // Add the custom label to the pop-up
+                addLabelChipForPopUp(labelList);
+            }
         }
+
     }
 
     public void setData1(CallModel callModel) {
@@ -3361,7 +3419,7 @@ public class OverlayWindow<lytEdit> {
                     chip.setText(Utils.checkStr(l.getName()));
                     chip.setTextColor(ContextCompat.getColor(context, R.color.white));
                     chip.setCheckable(false);
-                    chip.setTextSize(8);
+                    chip.setTextSize(12);
                     chip.setTextAlignment(Chip.TEXT_ALIGNMENT_CENTER);
                     chip.setRippleColor(null);
                     chip.setEnsureMinTouchTargetSize(false);

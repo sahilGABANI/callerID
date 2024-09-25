@@ -982,7 +982,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Create follow-up task"
-                                android:textAlignment="center"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="@dimen/_12sdp"
                                 android:visibility="visible"
@@ -1115,6 +1114,20 @@
                                     android:textSize="16sp"
                                     android:textStyle="bold"
                                     android:visibility="gone" />
+
+
+                                <TextView
+                                    android:id="@+id/EmptyMessageForTime"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginVertical="20dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:visibility="gone"
+                                    android:gravity="center_horizontal"
+                                    android:text="No Results Found"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"/>
 
                                 <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/activity_views"
@@ -1479,6 +1492,7 @@
                                 app:layout_constraintHorizontal_chainStyle="spread_inside"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
+
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txTask"
