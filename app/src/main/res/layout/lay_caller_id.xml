@@ -21,6 +21,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/_60sdp"
+            tools:visibility="visible"
             android:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -101,8 +102,8 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/icCloseButton"
-                        android:layout_width="@dimen/_15sdp"
-                        android:layout_height="@dimen/_15sdp"
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:tint="@color/black"
@@ -110,8 +111,8 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/icShareButton"
-                        android:layout_width="@dimen/_15sdp"
-                        android:layout_height="@dimen/_15sdp"
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
                         android:layout_alignParentTop="true"
                         android:layout_marginEnd="@dimen/_4sdp"
                         android:layout_toStartOf="@id/icCloseButton"
@@ -132,39 +133,47 @@
                         app:fontFamily="@font/gilroy_bold"
                         tools:text="Incoming call" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/txCallUserName"
+                    <LinearLayout
+                        android:id="@+id/llNameAndNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
                         android:layout_below="@id/icCallTypePopUp"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:text=""
-                        android:textAlignment="textStart"
-                        android:textColor="@color/txDark"
-                        android:textSize="14sp"
-                        app:fontFamily="@font/gilroy_bold" />
+                        android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/txCallUserNumber"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/txCallUserName"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:text=""
-                        android:textAlignment="textStart"
-                        android:textColor="@color/txDark"
-                        android:textSize="14sp"
-                        app:fontFamily="@font/gilroy_bold" />
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txCallUserName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:layout_weight="1"
+                            android:text=""
+                            android:textAlignment="textStart"
+                            android:textColor="@color/txDark"
+                            android:textSize="14sp"
+                            app:fontFamily="@font/gilroy_bold" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txCallUserNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:layout_weight="1"
+                            android:text=""
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/txDark"
+                            android:textSize="14sp"
+                            app:fontFamily="@font/gilroy_bold" />
+
+                    </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/textPopup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/txCallUserNumber"
+                        android:layout_below="@id/llNameAndNumber"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="@dimen/_3sdp"
@@ -195,16 +204,31 @@
                     </HorizontalScrollView>
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tvNotes"
+                        android:id="@+id/tvLastCallSinece"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/chipScrollView"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
-                        android:text="@string/last_call_2_days_ago"
+                        tools:text="@string/last_call_2_days_ago"
                         android:textAlignment="textStart"
                         android:textColor="@color/txRegular"
                         android:textSize="12sp"
+                        android:visibility="gone"
+                        app:fontFamily="@font/gilroy_regular" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tvLastCallSinece"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        tools:text="@string/last_call_2_days_ago"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/txRegular"
+                        android:textSize="12sp"
+                        android:visibility="gone"
                         app:fontFamily="@font/gilroy_regular" />
 
                 </RelativeLayout>
@@ -220,7 +244,7 @@
             android:background="@drawable/bg_lay"
             android:orientation="vertical"
             android:visibility="gone"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layCons"
@@ -444,20 +468,21 @@
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="12dp"
                             android:layout_marginEnd="16dp"
                             android:orientation="horizontal"
                             android:textAlignment="textStart"
                             android:visibility="gone"
-                            tools:visibility="visible"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/txIntegrationName">
+                            app:layout_constraintTop_toBottomOf="@+id/txIntegrationName"
+                            tools:visibility="visible">
 
                             <RelativeLayout
                                 android:id="@+id/rlStatus"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_marginEnd="@dimen/_5sdp"
                                 android:layout_weight="1"
                                 android:background="@drawable/round_edit_status"
@@ -492,7 +517,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignTop="@id/icEditStatus"
-                                    android:layout_alignBottom="@id/icEditStatus"
                                     android:layout_toEndOf="@id/icEditStatus"
                                     android:fontFamily="@font/gilroy_medium"
                                     android:gravity="center"
@@ -506,29 +530,12 @@
                             <RelativeLayout
                                 android:id="@+id/rlLabel"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_marginStart="@dimen/_5sdp"
                                 android:layout_weight="1"
                                 android:background="@drawable/round_edit_status"
                                 android:backgroundTint="@color/white"
                                 android:padding="@dimen/_5sdp">
-
-                                <!--                                <TextView-->
-                                <!--                                    android:id="@+id/txtLabel"-->
-                                <!--                                    android:layout_width="wrap_content"-->
-                                <!--                                    android:layout_height="wrap_content"-->
-                                <!--                                    android:drawableLeft="@drawable/ic_baseline_edit"-->
-                                <!--                                    android:drawableRight="@drawable/ic_baseline_keyboard_arrow_right"-->
-                                <!--                                    android:drawablePadding="@dimen/_5sdp"-->
-                                <!--                                    android:fontFamily="@font/gilroy_bold"-->
-                                <!--                                    android:gravity="center"-->
-                                <!--                                    android:padding="@dimen/_5sdp"-->
-                                <!--                                    android:paddingVertical="@dimen/_5sdp"-->
-                                <!--                                    android:text="Edit Label"-->
-                                <!--                                    android:textColor="@color/black"-->
-                                <!--                                    android:textSize="@dimen/_10sdp"-->
-                                <!--                                    android:textStyle="bold" />-->
-
 
                                 <TextView
                                     android:id="@+id/txtLabel"
@@ -555,54 +562,16 @@
 
                                 <TextView
                                     android:id="@+id/txtEditLabel"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_alignTop="@id/icEditLabel"
-                                    android:layout_alignBottom="@id/icEditLabel"
                                     android:layout_toEndOf="@id/icEditLabel"
                                     android:fontFamily="@font/gilroy_medium"
-                                    android:gravity="center"
                                     android:text="Edit Label"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/_13sdp" />
 
                             </RelativeLayout>
-                            <!--                            <TextView-->
-                            <!--                                android:id="@+id/txtEditStatus"-->
-                            <!--                                android:layout_width="wrap_content"-->
-                            <!--                                android:layout_height="wrap_content"-->
-                            <!--                                android:background="@drawable/round_edit_status"-->
-                            <!--                                android:backgroundTint="@color/white"-->
-                            <!--                                android:drawableLeft="@drawable/ic_baseline_edit"-->
-                            <!--                                android:drawableRight="@drawable/ic_baseline_keyboard_arrow_right"-->
-                            <!--                                android:drawablePadding="@dimen/_5sdp"-->
-                            <!--                                android:fontFamily="@font/gilroy_bold"-->
-                            <!--                                android:gravity="center"-->
-                            <!--                                android:padding="@dimen/_5sdp"-->
-                            <!--                                android:paddingVertical="@dimen/_5sdp"-->
-                            <!--                                android:text="Edit Status"-->
-                            <!--                                android:textColor="@color/black"-->
-                            <!--                                android:textSize="@dimen/_10sdp"-->
-                            <!--                                android:textStyle="bold" />-->
-
-                            <!--                            <TextView-->
-                            <!--                                android:id="@+id/txtLabel"-->
-                            <!--                                android:layout_width="wrap_content"-->
-                            <!--                                android:layout_height="wrap_content"-->
-                            <!--                                android:layout_marginLeft="@dimen/_20sdp"-->
-                            <!--                                android:background="@drawable/round_edit_status"-->
-                            <!--                                android:backgroundTint="@color/white"-->
-                            <!--                                android:drawableLeft="@drawable/ic_baseline_edit"-->
-                            <!--                                android:drawableRight="@drawable/ic_baseline_keyboard_arrow_right"-->
-                            <!--                                android:drawablePadding="@dimen/_5sdp"-->
-                            <!--                                android:fontFamily="@font/gilroy_bold"-->
-                            <!--                                android:gravity="center"-->
-                            <!--                                android:padding="@dimen/_5sdp"-->
-                            <!--                                android:paddingVertical="@dimen/_5sdp"-->
-                            <!--                                android:text="Edit Label"-->
-                            <!--                                android:textColor="@color/black"-->
-                            <!--                                android:textSize="@dimen/_10sdp"-->
-                            <!--                                android:textStyle="bold" />-->
 
                         </LinearLayout>
 
@@ -985,6 +954,8 @@
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="@dimen/_12sdp"
                                 android:visibility="visible"
+                                android:singleLine="true"
+                                android:ellipsize="end"
                                 app:fontFamily="@font/gilroy_regular" />
 
 
@@ -1552,4 +1523,3 @@
         app:SpinKit_Color="@color/colorPrimary" />
 
 </FrameLayout>
-
