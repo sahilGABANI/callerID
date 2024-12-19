@@ -60,6 +60,9 @@ public class ResponseModel {
         private String organization;
         private String team = null;
         private String createdAt;
+        private String recentTextNote;
+        private String lastCallSince;
+        private String resentTextNote;
         public UserPreference userPreference;
         private String integration;
 
@@ -153,6 +156,17 @@ public class ResponseModel {
 
         public String getTeam() {
             return team;
+        }
+        public String getLastCallSince() {
+            return lastCallSince;
+        }
+
+        public String getResentTextNote() {
+            return resentTextNote;
+        }
+
+        public String getRecentTextNote() {
+            return recentTextNote;
         }
 
         public String getCreatedAt() {

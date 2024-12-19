@@ -86,7 +86,7 @@ public interface Api {
 
     @FormUrlEncoded
     @POST("utility/dialog-box-ignore-list")
-    Single<SimpleResponseModel> addDontShow(@Field("phone") String phone);
+    Single<SimpleResponseModel> addDontShow(@Field("phone") String phone,@Field("isPhoneSpam") Boolean isPhoneSpam);
 
     @GET("utility/dialog-box-ignore-list")
     Single<IgnoreListResponse> getDontShowList();

@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -41,19 +42,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.callerid.R;
 import com.callerid.adapter.ActivityAdapter;
 import com.callerid.adapter.ContentAdapter;
@@ -89,29 +86,18 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.gson.Gson;
 import com.sqlite.AsSqlLite;
-
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.net.URLEncoder;
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -130,7 +116,7 @@ public class OverlayWindow<lytEdit> {
     private ImageView fabCall;
     private ConstraintLayout layCons, layPopup, layFab, consl;
     private AppCompatImageView icCall, icWhatsapp, icSettings, icClose, icOption, icCloseButton, icShareButton, icCallTypePopUp;
-    private AppCompatTextView txCallType, txCallTopType, txCallerName, textPopup, txCallUserName, txCallerNo, txCallUserNumber, tvNotes, txIntegrationName, txEditStatus, txStatus, txTimeline, txTask, txNotes, txInfo;
+    private AppCompatTextView txCallType, txCallTopType, txCallerName, textPopup, txCallUserName, txCallerNo, txCallUserNumber, tvNotes,tvLastCallSinece, txIntegrationName, txEditStatus, txStatus, txTimeline, txTask, txNotes, txInfo;
     private ChipGroup chipInfo, chipStatus, chipPopUp;
     private ShimmerFrameLayout shimmerDymanicLayout;
     private LinearLayout lytEdit;
@@ -256,6 +242,7 @@ public class OverlayWindow<lytEdit> {
             txCallUserName = view.findViewById(R.id.txCallUserName);
             txCallerNo = view.findViewById(R.id.txCallerNo);
             tvNotes = view.findViewById(R.id.tvNotes);
+            tvLastCallSinece = view.findViewById(R.id.tvLastCallSinece);
             txCallUserNumber = view.findViewById(R.id.txCallUserNumber);
             textPopup = view.findViewById(R.id.textPopup);
             txIntegrationName = view.findViewById(R.id.txIntegrationName);
@@ -651,8 +638,8 @@ public class OverlayWindow<lytEdit> {
                 mondayChip.setText("Friday");
                 tuesdayChip.setText("Next Week");
             }
-
             chipRemind.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+                @SuppressLint("NonConstantResourceId")
                 @Override
                 public void onCheckedChanged(ChipGroup group, int checkedId) {
                     resetDismissHandler();
@@ -661,139 +648,64 @@ public class OverlayWindow<lytEdit> {
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(d);
                     String newTime = "";
-                    switch (checkedId) {
-                        case R.id.fivemin:
-                            cal.add(Calendar.MINUTE, 30);
-                            newTime = df.format(cal.getTime());
-
-                            break;
-                        case R.id.thirtymin:
-                            cal.add(Calendar.HOUR, 1);
-                            newTime = df.format(cal.getTime());
-
-                            break;
-
-                        case R.id.twohr:
-                            if (result) {
-                                cal.add(Calendar.HOUR, 17);
-                                newTime = df.format(cal.getTime());
-                            } else {
-                                cal.add(Calendar.DAY_OF_MONTH, 1); // Move to tomorrow
-                                cal.set(Calendar.HOUR_OF_DAY, 11);
-                                newTime = df.format(cal.getTime());
-                            }
-
-                            break;
-
-                        case R.id.tmrw:
-
-                            if (result) {
-                                cal.add(Calendar.DAY_OF_YEAR, 1); // Move to the next day
-                                cal.add(Calendar.HOUR_OF_DAY, 10);
-                                newTime = df.format(cal.getTime());
-                            } else {
-                                cal.add(Calendar.DAY_OF_YEAR, 1);
-                                newTime = df.format(cal.getTime());
-                            }
-
-                        case R.id.mondayChip:
-
-                            if (isWeekend) {
-                                int today = cal.get(Calendar.DAY_OF_WEEK);
-                                int daysUntilMonday = (Calendar.MONDAY - today + 7) % 7;
-                                if (daysUntilMonday == 0) {
-                                    daysUntilMonday = 7; // Skip the current week if it's already Monday
-                                }
-                                cal.add(Calendar.DAY_OF_MONTH, daysUntilMonday);
-
-                                // Set to start of the day
-                                cal.set(Calendar.HOUR_OF_DAY, 0);
-                                cal.set(Calendar.MINUTE, 0);
-                                cal.set(Calendar.SECOND, 0);
-                            } else {
-                                int today = cal.get(Calendar.DAY_OF_WEEK);
-                                int daysUntilFriday = (Calendar.FRIDAY - today + 7) % 7;
-                                if (daysUntilFriday == 0) {
-                                    daysUntilFriday = 7; // Move to the next week if today is Friday
-                                }
-                                cal.add(Calendar.DAY_OF_MONTH, daysUntilFriday);
-                                cal.set(Calendar.HOUR_OF_DAY, 11); // 11 AM
-                                cal.set(Calendar.MINUTE, 0);
-                                cal.set(Calendar.SECOND, 0);
-
-                                // Add 30 minutes
-                                cal.add(Calendar.MINUTE, 30);
-                                newTime = df.format(cal.getTime());
-                            }
-
-                            break;
-
-                        case R.id.tuesdayChip:
-
-                            if (isWeekend) {
-                                int today = cal.get(Calendar.DAY_OF_WEEK);
-                                int daysUntilTuesday = (Calendar.TUESDAY - today + 7) % 7;
-                                if (daysUntilTuesday == 0) {
-                                    daysUntilTuesday = 7; // Skip the current week if it's already Tuesday
-                                }
-                                cal.add(Calendar.DAY_OF_MONTH, daysUntilTuesday);
-
-                                // Set to start of the day
-                                cal.set(Calendar.HOUR_OF_DAY, 0);
-                                cal.set(Calendar.MINUTE, 0);
-                                cal.set(Calendar.SECOND, 0);
-                            } else {
-                                cal.add(Calendar.DAY_OF_YEAR, 7);
-                                newTime = df.format(cal.getTime());
-                            }
-
-                            break;
-
-                        case R.id.nextFridayChip:
-
-                            if (isWeekend) {
-                                int today = cal.get(Calendar.DAY_OF_WEEK);
-                                int daysUntilFriday = (Calendar.FRIDAY - today + 7) % 7;
-                                if (daysUntilFriday == 0) {
-                                    daysUntilFriday = 7; // Skip the current week if it's already Friday
-                                }
-                                cal.add(Calendar.DAY_OF_MONTH, daysUntilFriday);
-
-                                // Set to start of the day
-                                cal.set(Calendar.HOUR_OF_DAY, 0);
-                                cal.set(Calendar.MINUTE, 0);
-                                cal.set(Calendar.SECOND, 0);
-                            } else {
-                                int today = cal.get(Calendar.DAY_OF_WEEK);
-                                int daysUntilFriday = (Calendar.FRIDAY - today + 7) % 7;
-                                if (daysUntilFriday == 0) {
-                                    daysUntilFriday = 7; // Skip the current week if it's already Friday
-                                }
-                                cal.add(Calendar.DAY_OF_MONTH, daysUntilFriday);
-
-                                // Set to start of the day
-                                cal.set(Calendar.HOUR_OF_DAY, 0);
-                                cal.set(Calendar.MINUTE, 0);
-                                cal.set(Calendar.SECOND, 0);
-                                newTime = df.format(cal.getTime());
-                            }
-
-                            break;
-
-                        default:
-                            return;
-
+                    if (checkedId == R.id.fivemin) {
+                        cal.add(Calendar.MINUTE, 5); // Updated to 5 minutes
+                        newTime = df.format(cal.getTime());
+                    } else if (checkedId == R.id.thirtymin) {
+                        cal.add(Calendar.MINUTE, 30);
+                        newTime = df.format(cal.getTime());
+                    } else if (checkedId == R.id.twohr) {
+                        if (result) {
+                            cal.add(Calendar.HOUR, 2); // Updated to 2 hours
+                        } else {
+                            cal.add(Calendar.DAY_OF_MONTH, 1);
+                            cal.set(Calendar.HOUR_OF_DAY, 11);
+                        }
+                        newTime = df.format(cal.getTime());
+                    } else if (checkedId == R.id.tmrw) {
+                        cal.add(Calendar.DAY_OF_YEAR, 1); // Move to the next day
+                        if (result) {
+                            cal.add(Calendar.HOUR_OF_DAY, 10); // Add 10 hours for next day
+                        }
+                        newTime = df.format(cal.getTime());
+                    } else if (checkedId == R.id.mondayChip) {
+                        int todayMonday = cal.get(Calendar.DAY_OF_WEEK);
+                        int daysUntilMonday = (Calendar.MONDAY - todayMonday + 7) % 7;
+                        if (daysUntilMonday == 0) {
+                            daysUntilMonday = 7; // Move to next Monday if today is Monday
+                        }
+                        cal.add(Calendar.DAY_OF_MONTH, daysUntilMonday);
+                        cal.set(Calendar.HOUR_OF_DAY, 11);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        newTime = df.format(cal.getTime());
+                    } else if (checkedId == R.id.tuesdayChip) {
+                        int todayTuesday = cal.get(Calendar.DAY_OF_WEEK);
+                        int daysUntilTuesday = (Calendar.TUESDAY - todayTuesday + 7) % 7;
+                        if (daysUntilTuesday == 0) {
+                            daysUntilTuesday = 7; // Move to next Tuesday if today is Tuesday
+                        }
+                        cal.add(Calendar.DAY_OF_MONTH, daysUntilTuesday);
+                        cal.set(Calendar.HOUR_OF_DAY, 11);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        newTime = df.format(cal.getTime());
+                    } else if (checkedId == R.id.nextFridayChip) {
+                        int todayFriday = cal.get(Calendar.DAY_OF_WEEK);
+                        int daysUntilFriday = (Calendar.FRIDAY - todayFriday + 7) % 7;
+                        if (daysUntilFriday == 0) {
+                            daysUntilFriday = 7; // Move to next Friday if today is Friday
+                        }
+                        cal.add(Calendar.DAY_OF_MONTH, daysUntilFriday);
+                        cal.set(Calendar.HOUR_OF_DAY, 11);
+                        cal.set(Calendar.MINUTE, 0);
+                        cal.set(Calendar.SECOND, 0);
+                        newTime = df.format(cal.getTime());
+                    } else {
+                        return; // No valid checkedId, return early
                     }
 
-                    saveInstantTask(newTime);
-
-                }
-            });
-            chipRemind.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    resetDismissHandler();
-                    return false;
+                    saveInstantTask(newTime); // Save the calculated newTime
                 }
             });
 
@@ -811,11 +723,8 @@ public class OverlayWindow<lytEdit> {
 
 
     public static boolean isWeekend() {
-        // Get the current day of the week
         Calendar cal = Calendar.getInstance();
         int today = cal.get(Calendar.DAY_OF_WEEK);
-
-        // Check if today is Friday, Saturday, or Sunday
         return today == Calendar.FRIDAY || today == Calendar.SATURDAY || today == Calendar.SUNDAY;
     }
 
@@ -900,22 +809,17 @@ public class OverlayWindow<lytEdit> {
 
 
     private void setView() {
-        asSqlLite = new AsSqlLite(context);
-        windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
-        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        getWindowManagerDefaultDisplay();
-
-
-        addRemoveView(layoutInflater);
-
-        addFloatingWidgetView(layoutInflater);
-        implementClickListeners();
-
-        addViewOnTouchListener();
-
+        if (Settings.canDrawOverlays(context)) {
+            asSqlLite = new AsSqlLite(context);
+            windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            getWindowManagerDefaultDisplay();
+            addRemoveView(layoutInflater);
+            addFloatingWidgetView(layoutInflater);
+            implementClickListeners();
+            addViewOnTouchListener();
+        }
     }
-
 
     ResponseModel.Data cm;
 
@@ -1179,7 +1083,6 @@ public class OverlayWindow<lytEdit> {
         WindowManager.LayoutParams paramRemove;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             paramRemove = new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, PixelFormat.TRANSLUCENT);
-
         } else {
             paramRemove = new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, PixelFormat.TRANSLUCENT);
         }
@@ -1196,8 +1099,10 @@ public class OverlayWindow<lytEdit> {
                 removeFloatingWidgetView.setVisibility(View.GONE);
             }
         });
-        //Add the view to the window
-        mWindowManager.addView(removeFloatingWidgetView, paramRemove);
+
+        if (Settings.canDrawOverlays(context)) {
+            mWindowManager.addView(removeFloatingWidgetView, paramRemove);
+        }
         return remove_image_view;
     }
 
@@ -1267,7 +1172,7 @@ public class OverlayWindow<lytEdit> {
         removeParams.y = y_cord;
 
         //Update Remove view params
-        mWindowManager.updateViewLayout(removeFloatingWidgetView, removeParams);
+//        mWindowManager.updateViewLayout(removeFloatingWidgetView, removeParams);
     }
 
     private int getStatusBarHeight() {
@@ -1335,7 +1240,7 @@ public class OverlayWindow<lytEdit> {
                             isLongClick = true;
 
                             //Set remove widget view visibility to VISIBLE
-                            removeFloatingWidgetView.setVisibility(View.VISIBLE);
+//                            removeFloatingWidgetView.setVisibility(View.VISIBLE);
 
                             onFloatingWidgetLongClick();
                         }
@@ -2838,10 +2743,12 @@ public class OverlayWindow<lytEdit> {
     }
 
     private void setDataForPopUp(ResponseModel.Data callModel) {
+
+        showFab();
         if (txCallUserName != null) {
             if (!Utils.checkStr(callModel.getName()).isEmpty())
                 txCallUserName.setText(Utils.checkStr(callModel.getName()));
-            else txCallUserName.setText(unknown);
+            else txCallUserName.setText("No Name");
         }
         if (txCallUserNumber != null) {
             mobileNumber = Utils.checkStr(callModel.getPhone());
@@ -2878,7 +2785,12 @@ public class OverlayWindow<lytEdit> {
             txtEditStatus.setText(cm.getStatus().get(0));
         }
         if (!cm.getLabel().isEmpty()) {
-            txtEditLabel.setText(cm.getLabel().get(0));
+            if (cm.getLabel().size() == 1) {
+                txtEditLabel.setText(cm.getLabel().get(0));
+            } else {
+                String labelText = cm.getLabel().get(0) + " And " + (cm.getLabel().size() - 1) + " other";
+                txtEditLabel.setText(labelText);
+            }
         }
         for (String s : strStatus) {
             boolean matchFound = false;  // To track if a match is found
@@ -3070,8 +2982,8 @@ public class OverlayWindow<lytEdit> {
         //Log.d("here","call api"+mobileNumber);
         txCallerNo.setText(mobileNumber);
         txCallUserNumber.setText(mobileNumber);
-        txCallerName.setText(unknown);
-        txCallUserName.setText(unknown);
+//        txCallerName.setText(unknown);
+//        txCallUserName.setText(unknown);
 
         String num = mobileNumber.replace("+91", "");
         try {
@@ -3153,13 +3065,16 @@ public class OverlayWindow<lytEdit> {
 
             File directory = new File(path);
             File[] files = directory.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].getName().toLowerCase().contains(currentTime)) {
+            if (files.length > 0) {
+                for (File file : files) {
+                    if (file.getName().toLowerCase().contains(currentTime)) {
 
-                    fileName = files[i].getName();
-                    break;
+                        fileName = file.getName();
+                        break;
+                    }
                 }
             }
+
             Log.d("FilesHere", "FileName:" + path + "/" + fileName);
             if (fileName != "") {
                 String mFoundFile = path + "/" + fileName;
@@ -3274,20 +3189,27 @@ public class OverlayWindow<lytEdit> {
         cm = cmr;
         try {
             if (cm != null) {
-                showFab();
                 setDataForPopUp(cm);
                 leadIds = cm.get_id();
                 chipRemind.setVisibility(View.VISIBLE);
                 txStatus.setVisibility(View.VISIBLE);
                 lytEdit.setVisibility(View.VISIBLE);
                 lytEdit.setVisibility(View.VISIBLE);
-                tvNotes.setVisibility(View.VISIBLE);
-//                tvNotes.setText(cm.des);
+                tvNotes.setVisibility(View.GONE);
+                tvLastCallSinece.setVisibility(View.GONE);
+                if (cm.getRecentTextNote() != null && !cm.getRecentTextNote().isEmpty()) {
+                    tvNotes.setVisibility(View.VISIBLE);
+                    tvNotes.setText("Last Note : "+cm.getRecentTextNote());
+                }
+                if (cm.getLastCallSince() != null && !cm.getLastCallSince().isEmpty()) {
+                    tvLastCallSinece.setVisibility(View.VISIBLE);
+                    tvLastCallSinece.setText("Last Call : " + cm.getLastCallSince());
+                }
                 if (txCallerName != null) {
                     if (!Utils.checkStr(cm.getName()).isEmpty()) {
                         txCallerName.setText(Utils.checkStr(cm.getName()));
                         txStatus.setText(" Remind to make another call with " + cm.getName() + " in");
-                    } else txCallerName.setText(unknown);
+                    } else txCallerName.setText("No Name");
                 }
                 if (txCallerNo != null) {
                     //  mobileNumber = Utils.checkStr(callModel.getNumber());
