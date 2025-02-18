@@ -192,7 +192,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkCallLogsPerm() {
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ANSWER_PHONE_CALLS) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             checkRolePerm();
             checkOverlayPermissions();
             checkIgnoreBatteryOptimizations();
@@ -204,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final ActivityResultLauncher<String[]> reqCallLogsPerm = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
         try {
-            if (isGranted.get(Manifest.permission.CALL_PHONE) && isGranted.get(Manifest.permission.READ_CALL_LOG) && isGranted.get(Manifest.permission.READ_PHONE_STATE)) {
+            if (isGranted.get(Manifest.permission.CALL_PHONE) && isGranted.get(Manifest.permission.ANSWER_PHONE_CALLS) && isGranted.get(Manifest.permission.READ_CALL_LOG) && isGranted.get(Manifest.permission.READ_PHONE_STATE)) {
                 checkRolePerm();
                 checkOverlayPermissions();
                 checkIgnoreBatteryOptimizations();

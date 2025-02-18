@@ -49,8 +49,10 @@ public class OverlayService extends Service implements CallScreeningListener {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
     HomeWatcher mHomeWatcher = null;
     SharedPreferences prf;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -76,6 +78,7 @@ public class OverlayService extends Service implements CallScreeningListener {
                     overlayWindow.close();
                 }
             }
+
             @Override
             public void onHomeLongPressed() {
                 Log.d("home","long pressed");
@@ -91,6 +94,8 @@ public class OverlayService extends Service implements CallScreeningListener {
     public void incomingCall(String number) {
         if (number != null && number.length() > 0) {
             mobileNumber = Utils.checkStr(number);
+
+            Log.e("TelephonyManager", "incomingCall :" + number);
             showPopup(number, "Incoming Call");
         }
     }
@@ -98,9 +103,9 @@ public class OverlayService extends Service implements CallScreeningListener {
     private class CallListener extends PhoneStateListener {
         @Override
         public void onCallStateChanged(int state, String number) {
-
             switch (state) {
                 case TelephonyManager.CALL_STATE_RINGING:
+                    Log.e("TelephonyManager", "CALL_STATE_RINGING");
                     prevState = state;
                     if (number != null && number.length() > 0) {
                         mobileNumber = Utils.checkStr(number);
@@ -109,7 +114,7 @@ public class OverlayService extends Service implements CallScreeningListener {
                     }
                     break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
-
+                    Log.e("TelephonyManager", "CALL_STATE_OFFHOOK");
                     if (number != null && number.length() > 0) {
                         mobileNumber = Utils.checkStr(number);
                         callType = prevState == TelephonyManager.CALL_STATE_RINGING ? "Incoming Call" : "Outgoing Call";
@@ -119,19 +124,19 @@ public class OverlayService extends Service implements CallScreeningListener {
                     break;
                 case TelephonyManager.CALL_STATE_IDLE:
 
-                    if(prf.getBoolean("callerid",true)){
-                        Log.d("idle","number is"+number);
+                    if (prf.getBoolean("callerid", true)) {
+                        Log.d("idle", "number is" + number);
                         if (number != null && number.length() > 0) {
                             mobileNumber = Utils.checkStr(number);
                         }
                         if (prevState == TelephonyManager.CALL_STATE_OFFHOOK) {
                             prevState = state;
-                            //  showPopup1(mobileNumber, callType);
-
+                            Log.e("TelephonyManager", "CALL_STATE_OFFHOOK");
+                            showPopup1(mobileNumber, callType);
                             getCallerDetails();
                         } else if (prevState == TelephonyManager.CALL_STATE_RINGING) {
                             prevState = state;
-                            //   showPopup1(mobileNumber, callType);
+                            showPopup1(mobileNumber, callType);
                             getCallerDetails();
                         }
                     }
@@ -196,14 +201,13 @@ public class OverlayService extends Service implements CallScreeningListener {
 
         }
     }
+
     private void showPopup1(String number, String callType) {
-
-
         CallModel callModel = new CallModel(Utils.checkStr(number), Utils.checkStr(callType));
         if (callModel != null) {
-            if (overlayWindow == null)
-            {
-                overlayWindow = new OverlayWindow(getApplicationContext(), callModel,true);
+            if (overlayWindow == null) {
+                overlayWindow = new OverlayWindow(getApplicationContext(), callModel, true);
+                overlayWindow.showPopup();
             } else {
                 overlayWindow.showPopup();
             }
@@ -265,14 +269,14 @@ public class OverlayService extends Service implements CallScreeningListener {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             String finalNumber = number1;
             new Handler().postDelayed(() -> {
-                Uri contacts = CallLog.Calls.CONTENT_URI.buildUpon().appendQueryParameter(LIMIT_PARAM_KEY,"1").build();
+                Uri contacts = CallLog.Calls.CONTENT_URI.buildUpon().appendQueryParameter(LIMIT_PARAM_KEY, "1").build();
                 Cursor cursor = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    cursor = this.getContentResolver().query(contacts, null, CallLog.Calls.NUMBER + " = ? OR "+ CallLog.Calls.NUMBER + " = ? OR "+ CallLog.Calls.NUMBER + " = ?",
-                            new String[]{"+91" + mobileNumber, mobileNumber, finalNumber}, CallLog.Calls.LAST_MODIFIED+" DESC");
+                    cursor = this.getContentResolver().query(contacts, null, CallLog.Calls.NUMBER + " = ? OR " + CallLog.Calls.NUMBER + " = ? OR " + CallLog.Calls.NUMBER + " = ?",
+                            new String[]{"+91" + mobileNumber, mobileNumber, finalNumber}, CallLog.Calls.LAST_MODIFIED + " DESC");
                 } else {
-                    cursor = this.getContentResolver().query(contacts, null, CallLog.Calls.NUMBER + " = ? OR "+ CallLog.Calls.NUMBER + " = ? OR "+ CallLog.Calls.NUMBER + " = ?",
-                            new String[]{"+91" + mobileNumber, mobileNumber, finalNumber}, CallLog.Calls.DATE+" DESC");
+                    cursor = this.getContentResolver().query(contacts, null, CallLog.Calls.NUMBER + " = ? OR " + CallLog.Calls.NUMBER + " = ? OR " + CallLog.Calls.NUMBER + " = ?",
+                            new String[]{"+91" + mobileNumber, mobileNumber, finalNumber}, CallLog.Calls.DATE + " DESC");
 
                     //    cursor = this.getContentResolver().query(contacts, null, null, null, CallLog.Calls.DATE+" DESC");
                 }
@@ -301,7 +305,7 @@ public class OverlayService extends Service implements CallScreeningListener {
         //  Log.d("log",new Gson().toJson(callModel));
         if (callModel != null) {
             if (overlayWindow == null)
-                overlayWindow = new OverlayWindow(this, callModel,true);
+                overlayWindow = new OverlayWindow(this, callModel, true);
             else overlayWindow.setData1(callModel);
         }
     }
@@ -336,13 +340,13 @@ public class OverlayService extends Service implements CallScreeningListener {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            drawpopup=false;
+            drawpopup = false;
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            drawpopup=true;
+            drawpopup = true;
         }
     }
 
-    boolean drawpopup=true;
+    boolean drawpopup = true;
 
     @Override
     public void onDestroy() {

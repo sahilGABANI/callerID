@@ -21,6 +21,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/_60sdp"
+            tools:visibility="gone"
             android:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,13 +46,13 @@
                     android:contentDescription="@string/app_name"
                     android:padding="15dp"
                     android:src="@drawable/ic_call"
-                    android:tint="@color/white"
                     android:visibility="gone"
                     app:elevation="5dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
 
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -72,16 +73,15 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:id="@+id/cardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginHorizontal="@dimen/_3sdp"
+                android:layout_marginHorizontal="@dimen/_4sdp"
                 android:visibility="visible"
-                app:cardBackgroundColor="#EBF0F4"
-                app:cardCornerRadius="10dp">
+                android:background="@drawable/bg_feb_normal">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -101,8 +101,8 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/icCloseButton"
-                        android:layout_width="@dimen/_15sdp"
-                        android:layout_height="@dimen/_15sdp"
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:tint="@color/black"
@@ -110,8 +110,8 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/icShareButton"
-                        android:layout_width="@dimen/_15sdp"
-                        android:layout_height="@dimen/_15sdp"
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
                         android:layout_alignParentTop="true"
                         android:layout_marginEnd="@dimen/_4sdp"
                         android:layout_toStartOf="@id/icCloseButton"
@@ -132,29 +132,51 @@
                         app:fontFamily="@font/gilroy_bold"
                         tools:text="Incoming call" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/txCallUserName"
+                    <LinearLayout
+                        android:id="@+id/llNameAndNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
                         android:layout_below="@id/icCallTypePopUp"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:text=""
-                        android:textAlignment="textStart"
-                        android:textColor="@color/txDark"
-                        android:textSize="14sp"
-                        app:fontFamily="@font/gilroy_bold" />
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txCallUserName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:layout_weight="1"
+                            android:text=""
+                            android:textAlignment="textStart"
+                            android:textColor="@color/txDark"
+                            android:textSize="14sp"
+                            app:fontFamily="@font/gilroy_bold" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txCallUserNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:layout_weight="1"
+                            android:text=""
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/txDark"
+                            android:textSize="14sp"
+                            app:fontFamily="@font/gilroy_bold" />
+
+                    </LinearLayout>
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/txCallUserNumber"
+                        android:id="@+id/txCallUnknownUserNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/txCallUserName"
+                        android:layout_marginHorizontal="@dimen/_5sdp"
+                        android:text=""
+                        android:layout_below="@id/llNameAndNumber"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:text=""
                         android:textAlignment="textStart"
                         android:textColor="@color/txDark"
                         android:textSize="14sp"
@@ -164,11 +186,11 @@
                         android:id="@+id/textPopup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/txCallUserNumber"
+                        android:layout_below="@id/llNameAndNumber"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="@dimen/_3sdp"
-                        android:text="Added via Facebook on 28th sept 2022 at 8:28 PM"
+                        tools:text="Added via Facebook on 28th sept 2022 at 8:28 PM"
                         android:textAlignment="textStart"
                         android:textColor="@color/txRegular"
                         android:textSize="12sp"
@@ -201,10 +223,11 @@
                         android:layout_below="@id/chipScrollView"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
-                        android:text="@string/last_call_2_days_ago"
+                        tools:text="@string/last_call_2_days_ago"
                         android:textAlignment="textStart"
                         android:textColor="@color/txRegular"
                         android:textSize="12sp"
+                        android:visibility="gone"
                         app:fontFamily="@font/gilroy_regular" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -214,15 +237,30 @@
                         android:layout_below="@id/tvLastCallSinece"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentEnd="true"
-                        android:text="@string/last_call_2_days_ago"
+                        tools:text="@string/last_call_2_days_ago"
                         android:textAlignment="textStart"
                         android:textColor="@color/txRegular"
                         android:textSize="12sp"
+                        android:visibility="gone"
                         app:fontFamily="@font/gilroy_regular" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txMakeAsSpamInFeb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mark as spam"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:padding="@dimen/_5sdp"
+                        android:textAlignment="textStart"
+                        android:textColor="#C91D1D"
+                        android:textSize="16sp"
+                        app:fontFamily="@font/gilroy_bold"
+                        android:layout_below="@id/tvNotes"/>
 
                 </RelativeLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
         </RelativeLayout>
 
         <LinearLayout
@@ -230,7 +268,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/bg_lay"
             android:orientation="vertical"
             android:visibility="gone"
             tools:visibility="visible">
@@ -238,8 +275,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layCons"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_lay">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/close_expanded_view"
@@ -278,7 +314,6 @@
                     android:id="@+id/consl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@color/bg"
                     android:elevation="15dp"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -291,8 +326,7 @@
                         android:id="@+id/layPopup"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_lay"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:background="@color/bg"
                         app:layout_constraintBottom_toTopOf="@id/layChange"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -355,6 +389,21 @@
                             app:layout_constraintStart_toEndOf="@+id/icSettings"
                             app:layout_constraintTop_toTopOf="@+id/icSettings"
                             app:srcCompat="@drawable/ic_menu_option" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txMakeAsSpam"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/_30sdp"
+                            android:text="Mark as spam"
+                            android:padding="@dimen/_5sdp"
+                            android:textAlignment="textStart"
+                            android:textColor="#C91D1D"
+                            android:textSize="16sp"
+                            app:fontFamily="@font/gilroy_bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toTopOf="@id/txIntegrationName"
+                            app:layout_constraintTop_toBottomOf="@id/icOption" />
 
                         <com.facebook.shimmer.ShimmerFrameLayout
                             android:id="@+id/shimmerDymanicLayout"
@@ -707,8 +756,8 @@
                         android:id="@+id/layChange"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:background="@color/bg"
                         android:visibility="visible"
+                        android:background="@color/bg"
                         app:layout_constraintBottom_toTopOf="@id/bar"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

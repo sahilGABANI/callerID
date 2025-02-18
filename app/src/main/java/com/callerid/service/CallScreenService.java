@@ -7,7 +7,9 @@ import android.os.Build;
 import android.os.Handler;
 import android.telecom.Call;
 import android.telecom.CallScreeningService;
+import android.telecom.TelecomManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -15,6 +17,8 @@ import androidx.annotation.RequiresApi;
 import com.callerid.activity.StarterServiceActivity;
 import com.callerid.utils.CallScreeningListener;
 import com.callerid.utils.Utils;
+
+import java.util.Objects;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class CallScreenService extends CallScreeningService {
@@ -35,6 +39,21 @@ public class CallScreenService extends CallScreeningService {
     @Override
     public void onScreenCall(@NonNull Call.Details details) {
         try {
+            String incomingNumber = details.getHandle().getSchemeSpecificPart();
+            Log.i("CallScreenService", "onScreenCall: " +incomingNumber);
+//            if (Objects.equals(incomingNumber, "+919316557364")) {
+//                CallResponse.Builder response = new CallResponse.Builder();
+//                response.setDisallowCall(true);
+//                response.setRejectCall(true);
+//                response.setSkipNotification(true);
+//                response.setSkipCallLog(true);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                    response.setSilenceCall(true);
+//                }
+//                respondToCall(details, response.build());
+//
+////                rejectCall(getApplicationContext());
+//            }
             if (callScreeningListener != null)
                 callScreeningListener.incomingCall(Utils.checkStr(Uri.decode(String.valueOf(details.getHandle()).replace("tel:", ""))));
             else {

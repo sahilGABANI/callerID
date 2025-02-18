@@ -91,7 +91,6 @@ public interface Api {
     @GET("utility/dialog-box-ignore-list")
     Single<IgnoreListResponse> getDontShowList();
 
-
     @Multipart
     @POST("activity")
     Single<UploadImage> addAttachment(@Part("leadIds[]") RequestBody leadIds,

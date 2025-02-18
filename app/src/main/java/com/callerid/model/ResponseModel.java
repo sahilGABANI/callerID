@@ -65,6 +65,7 @@ public class ResponseModel {
         private String resentTextNote;
         public UserPreference userPreference;
         private String integration;
+        private Boolean isPhoneSpam;
 
 
         // Getter Methods
@@ -92,6 +93,14 @@ public class ResponseModel {
 
         public void setLabel(ArrayList<String> label) {
             this.label = label;
+        }
+
+        public Boolean getIsPhoneSpam() {
+            return isPhoneSpam;
+        }
+
+        public void setIsPhoneSpam(Boolean label) {
+            this.isPhoneSpam = label;
         }
 
         public String get_id() {
@@ -308,6 +317,41 @@ public class ResponseModel {
 
 
     }
+
+
+    public class PhoneSpamInfo{
+        private String createdAt;
+        private String phone;
+        private String createdBy;
+        private int v;
+        private String id;
+        private String updatedAt;
+
+        public String getCreatedAt(){
+            return createdAt;
+        }
+
+        public String getPhone(){
+            return phone;
+        }
+
+        public String getCreatedBy(){
+            return createdBy;
+        }
+
+        public int getV(){
+            return v;
+        }
+
+        public String getId(){
+            return id;
+        }
+
+        public String getUpdatedAt(){
+            return updatedAt;
+        }
+    }
+
 
 
 }
