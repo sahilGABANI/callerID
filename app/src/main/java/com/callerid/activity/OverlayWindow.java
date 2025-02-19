@@ -2785,21 +2785,21 @@ public class OverlayWindow<lytEdit> {
                 textPopup.setText(Utils.getLeadName(callModel.getIntegration(), convertTime(cm.getCreatedAt())));
             }
         }
-        if (callModel.getIsPhoneSpam()) {
-            cardView.setBackgroundResource(R.drawable.bg_feb_spam);
-            expandedView.setBackgroundResource(R.drawable.bg_lay_spam);
-            consl.setBackgroundResource(R.drawable.bg_lay_spam);
-            laychange.setBackgroundResource(R.drawable.bg_squre_spam);
-            txMakeAsSpam.setText("Spam detected");
-            txMakeAsSpamInFeb.setText("Spam detected");
-        } else {
-            cardView.setBackgroundResource(R.drawable.bg_feb_normal);
-            expandedView.setBackgroundResource(R.drawable.bg_lay);
-            laychange.setBackgroundResource(R.drawable.bg_squre_normal);
-            consl.setBackgroundResource(R.drawable.bg_lay);
-            txMakeAsSpam.setText("Mark as spam");
-            txMakeAsSpamInFeb.setText("Mark as spam");
-        }
+//        if (callModel.getIsPhoneSpam()) {
+//            cardView.setBackgroundResource(R.drawable.bg_feb_spam);
+//            expandedView.setBackgroundResource(R.drawable.bg_lay_spam);
+//            consl.setBackgroundResource(R.drawable.bg_lay_spam);
+//            laychange.setBackgroundResource(R.drawable.bg_squre_spam);
+//            txMakeAsSpam.setText("Spam detected");
+//            txMakeAsSpamInFeb.setText("Spam detected");
+//        } else {
+//            cardView.setBackgroundResource(R.drawable.bg_feb_normal);
+//            expandedView.setBackgroundResource(R.drawable.bg_lay);
+//            laychange.setBackgroundResource(R.drawable.bg_squre_normal);
+//            consl.setBackgroundResource(R.drawable.bg_lay);
+//            txMakeAsSpam.setText("Mark as spam");
+//            txMakeAsSpamInFeb.setText("Mark as spam");
+//        }
 
         ArrayList<LabelModel> labelList = new ArrayList<>();
         List<String> strLabels = new ArrayList<>();
@@ -3095,41 +3095,41 @@ public class OverlayWindow<lytEdit> {
                                     if (statusCode == 404) {
                                         // Handle 404 error specifically
                                         Log.e("API Error", "404 Not Found: " + e.getMessage());
-                                        try {
-                                            String errorBody = httpException.response().errorBody().string();
-                                            JSONObject jsonObject = new JSONObject(errorBody);
-
-                                            boolean isPhoneSpam = jsonObject.getJSONObject("data").getBoolean("isPhoneSpam");
-                                            if (!isPhoneSpam) {
-                                                cardView.setBackgroundResource(R.drawable.bg_feb_normal);
-                                                expandedView.setBackgroundResource(R.drawable.bg_lay);
-                                                laychange.setBackgroundResource(R.drawable.bg_squre_normal);
-                                                consl.setBackgroundResource(R.drawable.bg_lay);
-                                                txMakeAsSpam.setText("Mark as spam");
-                                                txMakeAsSpamInFeb.setText("Mark as spam");
-                                                if (expandedView != null && expandedView.getVisibility() == View.VISIBLE) {
-                                                    hideFab();
-                                                } else {
-                                                    showFab();
-                                                }
-                                            } else {
-                                                if (expandedView != null && expandedView.getVisibility() == View.VISIBLE) {
-                                                    hideFab();
-                                                } else {
-                                                    showFab();
-                                                }
-                                                hideFab();
-                                                cardView.setBackgroundResource(R.drawable.bg_feb_spam);
-                                                expandedView.setBackgroundResource(R.drawable.bg_lay_spam);
-                                                consl.setBackgroundResource(R.drawable.bg_lay_spam);
-                                                laychange.setBackgroundResource(R.drawable.bg_squre_spam);
-                                                txMakeAsSpam.setText("Spam detected");
-                                                txMakeAsSpamInFeb.setText("Spam detected");
-                                            }
-                                        } catch (Exception ex) {
-                                            ex.printStackTrace();
-                                            Log.e("API Error", "Error parsing 404 response: " + ex.getMessage());
-                                        }
+//                                        try {
+//                                            String errorBody = httpException.response().errorBody().string();
+//                                            JSONObject jsonObject = new JSONObject(errorBody);
+//
+//                                            boolean isPhoneSpam = jsonObject.getJSONObject("data").getBoolean("isPhoneSpam");
+//                                            if (!isPhoneSpam) {
+//                                                cardView.setBackgroundResource(R.drawable.bg_feb_normal);
+//                                                expandedView.setBackgroundResource(R.drawable.bg_lay);
+//                                                laychange.setBackgroundResource(R.drawable.bg_squre_normal);
+//                                                consl.setBackgroundResource(R.drawable.bg_lay);
+//                                                txMakeAsSpam.setText("Mark as spam");
+//                                                txMakeAsSpamInFeb.setText("Mark as spam");
+//                                                if (expandedView != null && expandedView.getVisibility() == View.VISIBLE) {
+//                                                    hideFab();
+//                                                } else {
+//                                                    showFab();
+//                                                }
+//                                            } else {
+//                                                if (expandedView != null && expandedView.getVisibility() == View.VISIBLE) {
+//                                                    hideFab();
+//                                                } else {
+//                                                    showFab();
+//                                                }
+//                                                hideFab();
+//                                                cardView.setBackgroundResource(R.drawable.bg_feb_spam);
+//                                                expandedView.setBackgroundResource(R.drawable.bg_lay_spam);
+//                                                consl.setBackgroundResource(R.drawable.bg_lay_spam);
+//                                                laychange.setBackgroundResource(R.drawable.bg_squre_spam);
+//                                                txMakeAsSpam.setText("Spam detected");
+//                                                txMakeAsSpamInFeb.setText("Spam detected");
+//                                            }
+//                                        } catch (Exception ex) {
+//                                            ex.printStackTrace();
+//                                            Log.e("API Error", "Error parsing 404 response: " + ex.getMessage());
+//                                        }
                                         txCallUserName.setText(unknown + " caller");
                                         txCallerName.setText(unknown);
                                         txCallUnknownUserNumber.setVisibility(View.VISIBLE);
