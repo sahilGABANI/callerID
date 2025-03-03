@@ -41,6 +41,7 @@ public class CallScreenService extends CallScreeningService {
         try {
             String incomingNumber = details.getHandle().getSchemeSpecificPart();
             Log.i("CallScreenService", "onScreenCall: " +incomingNumber);
+            Log.i("CallScreenService", "onScreenCall: " +details.getHandle().getUserInfo());
 //            if (Objects.equals(incomingNumber, "+919316557364")) {
 //                CallResponse.Builder response = new CallResponse.Builder();
 //                response.setDisallowCall(true);

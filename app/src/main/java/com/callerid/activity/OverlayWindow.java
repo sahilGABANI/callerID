@@ -18,7 +18,6 @@ import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -50,6 +49,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.provider.Settings;
+
 import com.callerid.R;
 import com.callerid.adapter.ActivityAdapter;
 import com.callerid.adapter.ContentAdapter;
@@ -86,7 +87,6 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.gson.Gson;
 import com.sqlite.AsSqlLite;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import java.io.File;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -105,7 +105,6 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.HttpException;
 
 @SuppressLint("InflateParams, ClickableViewAccessibility")
 public class OverlayWindow<lytEdit> {
@@ -117,10 +116,10 @@ public class OverlayWindow<lytEdit> {
     private ImageView fabCall;
     private ConstraintLayout layCons, layPopup, layFab, consl;
     private AppCompatImageView icCall, icWhatsapp, icSettings, icClose, icOption, icCloseButton, icShareButton, icCallTypePopUp;
-    private AppCompatTextView txCallType, txCallTopType, txCallerName, textPopup, txCallUserName, txCallerNo, txCallUserNumber,txCallUnknownUserNumber, tvNotes,tvLastCallSinece, txIntegrationName, txEditStatus, txStatus, txTimeline, txTask, txNotes, txInfo;
+    private AppCompatTextView txCallType, txCallTopType, txCallerName, textPopup, txCallUserName, txCallerNo, txCallUserNumber, tvNotes,tvLastCallSinece, txIntegrationName, txEditStatus, txStatus, txTimeline, txTask, txNotes, txInfo;
     private ChipGroup chipInfo, chipStatus, chipPopUp;
     private ShimmerFrameLayout shimmerDymanicLayout;
-    private LinearLayout lytEdit,cardView;
+    private LinearLayout lytEdit;
     private SpinKitView progress;
     private TextView txtEditStatus, txtEditLabel;
     private RecyclerView rvEditStatusList, rvEditLabelList;
@@ -174,7 +173,7 @@ public class OverlayWindow<lytEdit> {
     private ConstraintLayout tasklistview;
     private RecyclerView task_views;
     private RelativeLayout notelay;
-    private TextView addnote,txMakeAsSpam,txMakeAsSpamInFeb;
+    private TextView addnote;
     private RelativeLayout addnotelay, lytAddNotes;
     private EditText noteDesc;
     private AppCompatButton savenote;
@@ -245,13 +244,11 @@ public class OverlayWindow<lytEdit> {
             tvNotes = view.findViewById(R.id.tvNotes);
             tvLastCallSinece = view.findViewById(R.id.tvLastCallSinece);
             txCallUserNumber = view.findViewById(R.id.txCallUserNumber);
-            txCallUnknownUserNumber = view.findViewById(R.id.txCallUnknownUserNumber);
             textPopup = view.findViewById(R.id.textPopup);
             txIntegrationName = view.findViewById(R.id.txIntegrationName);
             txEditStatus = view.findViewById(R.id.txEditStatus);
             txStatus = view.findViewById(R.id.txStatus);
             lytEdit = view.findViewById(R.id.lytEdit);
-            cardView = view.findViewById(R.id.cardView);
             txtEditStatus = view.findViewById(R.id.txtEditStatus);
             rvEditStatusList = view.findViewById(R.id.rvEditStatusList);
             rvEditLabelList = view.findViewById(R.id.rvEditLabelList);
@@ -289,8 +286,6 @@ public class OverlayWindow<lytEdit> {
             task_views = (RecyclerView) view.findViewById(R.id.task_views);
             notelay = (RelativeLayout) view.findViewById(R.id.notelay);
             addnote = (TextView) view.findViewById(R.id.addnote);
-            txMakeAsSpam = (TextView) view.findViewById(R.id.txMakeAsSpam);
-            txMakeAsSpamInFeb = (TextView) view.findViewById(R.id.txMakeAsSpamInFeb);
             addnotelay = (RelativeLayout) view.findViewById(R.id.addnotelay);
             lytAddNotes = (RelativeLayout) view.findViewById(R.id.lytAddNotes);
             noteDesc = (EditText) view.findViewById(R.id.noteDesc);
@@ -476,21 +471,6 @@ public class OverlayWindow<lytEdit> {
 
                 }
             });
-
-            txMakeAsSpam.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (txMakeAsSpam.getText().equals("Spam detected")) return;
-                    callDowntShow(true,false);
-                }
-            });
-            txMakeAsSpamInFeb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (txMakeAsSpamInFeb.getText().equals("Spam detected")) return;
-                    callDowntShow(true,true);
-                }
-            });
             notelay.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -585,7 +565,7 @@ public class OverlayWindow<lytEdit> {
                 @Override
                 public void onClick(View view) {
                     resetDismissHandler();
-                    callDowntShow(false,false);
+                    callDowntShow();
 
                 }
             });
@@ -658,8 +638,8 @@ public class OverlayWindow<lytEdit> {
                 mondayChip.setText("Friday");
                 tuesdayChip.setText("Next Week");
             }
+
             chipRemind.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
-                @SuppressLint("NonConstantResourceId")
                 @Override
                 public void onCheckedChanged(ChipGroup group, int checkedId) {
                     resetDismissHandler();
@@ -668,64 +648,89 @@ public class OverlayWindow<lytEdit> {
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(d);
                     String newTime = "";
-                    if (checkedId == R.id.fivemin) {
-                        cal.add(Calendar.MINUTE, 5); // Updated to 5 minutes
-                        newTime = df.format(cal.getTime());
-                    } else if (checkedId == R.id.thirtymin) {
-                        cal.add(Calendar.MINUTE, 30);
-                        newTime = df.format(cal.getTime());
-                    } else if (checkedId == R.id.twohr) {
-                        if (result) {
-                            cal.add(Calendar.HOUR, 2); // Updated to 2 hours
-                        } else {
-                            cal.add(Calendar.DAY_OF_MONTH, 1);
-                            cal.set(Calendar.HOUR_OF_DAY, 11);
-                        }
-                        newTime = df.format(cal.getTime());
-                    } else if (checkedId == R.id.tmrw) {
-                        cal.add(Calendar.DAY_OF_YEAR, 1); // Move to the next day
-                        if (result) {
-                            cal.add(Calendar.HOUR_OF_DAY, 10); // Add 10 hours for next day
-                        }
-                        newTime = df.format(cal.getTime());
-                    } else if (checkedId == R.id.mondayChip) {
-                        int todayMonday = cal.get(Calendar.DAY_OF_WEEK);
-                        int daysUntilMonday = (Calendar.MONDAY - todayMonday + 7) % 7;
-                        if (daysUntilMonday == 0) {
-                            daysUntilMonday = 7; // Move to next Monday if today is Monday
-                        }
-                        cal.add(Calendar.DAY_OF_MONTH, daysUntilMonday);
-                        cal.set(Calendar.HOUR_OF_DAY, 11);
-                        cal.set(Calendar.MINUTE, 0);
-                        cal.set(Calendar.SECOND, 0);
-                        newTime = df.format(cal.getTime());
-                    } else if (checkedId == R.id.tuesdayChip) {
-                        int todayTuesday = cal.get(Calendar.DAY_OF_WEEK);
-                        int daysUntilTuesday = (Calendar.TUESDAY - todayTuesday + 7) % 7;
-                        if (daysUntilTuesday == 0) {
-                            daysUntilTuesday = 7; // Move to next Tuesday if today is Tuesday
-                        }
-                        cal.add(Calendar.DAY_OF_MONTH, daysUntilTuesday);
-                        cal.set(Calendar.HOUR_OF_DAY, 11);
-                        cal.set(Calendar.MINUTE, 0);
-                        cal.set(Calendar.SECOND, 0);
-                        newTime = df.format(cal.getTime());
-                    } else if (checkedId == R.id.nextFridayChip) {
-                        int todayFriday = cal.get(Calendar.DAY_OF_WEEK);
-                        int daysUntilFriday = (Calendar.FRIDAY - todayFriday + 7) % 7;
-                        if (daysUntilFriday == 0) {
-                            daysUntilFriday = 7; // Move to next Friday if today is Friday
-                        }
-                        cal.add(Calendar.DAY_OF_MONTH, daysUntilFriday);
-                        cal.set(Calendar.HOUR_OF_DAY, 11);
-                        cal.set(Calendar.MINUTE, 0);
-                        cal.set(Calendar.SECOND, 0);
-                        newTime = df.format(cal.getTime());
-                    } else {
-                        return; // No valid checkedId, return early
-                    }
-
-                    saveInstantTask(newTime); // Save the calculated newTime
+                    // switch (checkedId) {
+//                        case R.id.fivemin:
+//                            cal.add(Calendar.MINUTE, 5); // Updated to 5 minutes
+//                            newTime = df.format(cal.getTime());
+//                            break;
+//
+//                        case R.id.thirtymin:
+//                            cal.add(Calendar.MINUTE, 30);
+//                            newTime = df.format(cal.getTime());
+//                            break;
+//
+//                        case R.id.twohr:
+//                            if (result) {
+//                                cal.add(Calendar.HOUR, 2); // Updated to 2 hours
+//                            } else {
+//                                cal.add(Calendar.DAY_OF_MONTH, 1); // Move to tomorrow
+//                                cal.set(Calendar.HOUR_OF_DAY, 11); // Set to 11 AM
+//                            }
+//                            newTime = df.format(cal.getTime());
+//                            break;
+//
+//                        case R.id.tmrw:
+//                            cal.add(Calendar.DAY_OF_YEAR, 1); // Move to the next day
+//                            if (result) {
+//                                cal.add(Calendar.HOUR_OF_DAY, 10); // Add 10 hours for next day
+//                            }
+//                            newTime = df.format(cal.getTime());
+//                            break;
+//
+//                        case R.id.mondayChip:
+//                            int todayMonday = cal.get(Calendar.DAY_OF_WEEK);
+//                            int daysUntilMonday = (Calendar.MONDAY - todayMonday + 7) % 7;
+//                            if (daysUntilMonday == 0) {
+//                                daysUntilMonday = 7; // Move to next Monday if today is Monday
+//                            }
+//                            cal.add(Calendar.DAY_OF_MONTH, daysUntilMonday);
+//                            // Set to 11 AM
+//                            cal.set(Calendar.HOUR_OF_DAY, 11);
+//                            cal.set(Calendar.MINUTE, 0);
+//                            cal.set(Calendar.SECOND, 0);
+//                            newTime = df.format(cal.getTime());
+//                            break;
+//
+//                        case R.id.tuesdayChip:
+//                            int todayTuesday = cal.get(Calendar.DAY_OF_WEEK);
+//                            int daysUntilTuesday = (Calendar.TUESDAY - todayTuesday + 7) % 7;
+//                            if (daysUntilTuesday == 0) {
+//                                daysUntilTuesday = 7; // Move to next Tuesday if today is Tuesday
+//                            }
+//                            cal.add(Calendar.DAY_OF_MONTH, daysUntilTuesday);
+//                            // Set to 11 AM
+//                            cal.set(Calendar.HOUR_OF_DAY, 11);
+//                            cal.set(Calendar.MINUTE, 0);
+//                            cal.set(Calendar.SECOND, 0);
+//                            newTime = df.format(cal.getTime());
+//                            break;
+//
+//                        case R.id.nextFridayChip:
+//                            int todayFriday = cal.get(Calendar.DAY_OF_WEEK);
+//                            int daysUntilFriday = (Calendar.FRIDAY - todayFriday + 7) % 7;
+//                            if (daysUntilFriday == 0) {
+//                                daysUntilFriday = 7; // Move to next Friday if today is Friday
+//                            }
+//                            cal.add(Calendar.DAY_OF_MONTH, daysUntilFriday);
+//                            // Set to start of the day
+//                            cal.set(Calendar.HOUR_OF_DAY, 11);
+//                            cal.set(Calendar.MINUTE, 0);
+//                            cal.set(Calendar.SECOND, 0);
+//                            newTime = df.format(cal.getTime());
+//                            break;
+//
+//                        default:
+//                            return; // No valid checkedId, return early
+//                    }
+//
+//                    saveInstantTask(newTime); // Save the calculated newTime
+                }
+            });
+            chipRemind.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    resetDismissHandler();
+                    return false;
                 }
             });
 
@@ -743,8 +748,11 @@ public class OverlayWindow<lytEdit> {
 
 
     public static boolean isWeekend() {
+        // Get the current day of the week
         Calendar cal = Calendar.getInstance();
         int today = cal.get(Calendar.DAY_OF_WEEK);
+
+        // Check if today is Friday, Saturday, or Sunday
         return today == Calendar.FRIDAY || today == Calendar.SATURDAY || today == Calendar.SUNDAY;
     }
 
@@ -767,26 +775,24 @@ public class OverlayWindow<lytEdit> {
         return now.after(startTime) && now.before(endTime);
     }
 
-    private void callDowntShow(boolean b,boolean isFab ) {
+    private void callDowntShow() {
 
         try {
             if (disposable != null) {
                 showProgress();
-                disposable.add(RetroFit.get1(context).addDontShow("" + mobileNumber,true).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<SimpleResponseModel>() {
+                disposable.add(RetroFit.get1(context).addDontShow("" + mobileNumber).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<SimpleResponseModel>() {
                     @Override
                     public void onSuccess(@NonNull SimpleResponseModel rm) {
                         hideProgress();
 
                         if (rm.isSuccess()) {
+
                             Toast.makeText(context, "Success", Toast.LENGTH_LONG).show();
+
                             btnDontShow.setVisibility(View.GONE);
-//                            asSqlLite.insertIgnoreList("", "", mobileNumber, "");
-                            if (b) {
-                                hidePopup();
-                            }
-                            if (isFab) {
-                                hideFab();
-                            }
+
+                            asSqlLite.insertIgnoreList("", "", mobileNumber, "");
+
                         } else {
                             showSuccess("Couldn't add task");
                             Handler handler = new Handler();
@@ -796,6 +802,8 @@ public class OverlayWindow<lytEdit> {
                                     hideSuccess();
                                 }
                             }, 1500);
+
+
                         }
                     }
 
@@ -840,6 +848,7 @@ public class OverlayWindow<lytEdit> {
             addViewOnTouchListener();
         }
     }
+
 
     ResponseModel.Data cm;
 
@@ -1119,7 +1128,6 @@ public class OverlayWindow<lytEdit> {
                 removeFloatingWidgetView.setVisibility(View.GONE);
             }
         });
-
         if (Settings.canDrawOverlays(context)) {
             mWindowManager.addView(removeFloatingWidgetView, paramRemove);
         }
@@ -1152,8 +1160,13 @@ public class OverlayWindow<lytEdit> {
         mWindowManager.getDefaultDisplay().getMetrics(displaymetrics);
         windowHeight = displaymetrics.heightPixels;
         windowWidth = displaymetrics.widthPixels;
+
+// Specify the view position
         floatparams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL; // Center horizontally with margin on both sides
+
         mWindowManager.addView(mFloatingWidgetView, floatparams);
+
+// Find id of collapsed view layout
         collapsedView = mFloatingWidgetView.findViewById(R.id.collapse_view);
 
 // Find id of the expanded view layout
@@ -1187,7 +1200,7 @@ public class OverlayWindow<lytEdit> {
         removeParams.y = y_cord;
 
         //Update Remove view params
-//        mWindowManager.updateViewLayout(removeFloatingWidgetView, removeParams);
+        // mWindowManager.updateViewLayout(removeFloatingWidgetView, removeParams);
     }
 
     private int getStatusBarHeight() {
@@ -1255,7 +1268,7 @@ public class OverlayWindow<lytEdit> {
                             isLongClick = true;
 
                             //Set remove widget view visibility to VISIBLE
-//                            removeFloatingWidgetView.setVisibility(View.VISIBLE);
+                            // removeFloatingWidgetView.setVisibility(View.VISIBLE);
 
                             onFloatingWidgetLongClick();
                         }
@@ -1307,6 +1320,9 @@ public class OverlayWindow<lytEdit> {
                                     } else {
                                         moveToRight(floatparams.x);
                                     }
+
+
+                                    // always remove close view ImageView when video view is dropped
                                     removeFloatingWidgetView.setVisibility(View.GONE);
                                     //ivCloseView = null;
                                 }
@@ -2327,6 +2343,7 @@ public class OverlayWindow<lytEdit> {
                     do {
                         String phone = cursor.getString(3);
                         if (phone.equals(mobileNumber)) {
+                            Log.i("OverlayWindow", "hide from database: " + mobileNumber);
                             hideFab();
                             return;
                         }
@@ -2390,7 +2407,6 @@ public class OverlayWindow<lytEdit> {
         Cursor cursor = null;
         cursor = asSqlLite.getAllIgnoreList();
         if (cursor != null) {
-            Log.d("return cursor", "true" + cursor);
             if (cursor.moveToFirst()) {
                 do {
                     String phone = cursor.getString(3);
@@ -2438,7 +2454,7 @@ public class OverlayWindow<lytEdit> {
                 @Override
                 public void run() {
                     Log.e("TAG", "Hide PopUp");
-//                    hidePopup();
+                    hidePopup();
                 }
             };
 
@@ -2484,10 +2500,6 @@ public class OverlayWindow<lytEdit> {
                 if (addnotelay != null && addnotelay.getVisibility() != View.VISIBLE) {
                     addnotelay.setVisibility(View.VISIBLE);
                 }
-
-                if (txIntegrationName != null && txIntegrationName.getVisibility() != View.VISIBLE) {
-                    txIntegrationName.setVisibility(View.GONE);
-                }
                 if (notelistview != null && notelistview.getVisibility() != View.GONE) {
                     notelistview.setVisibility(View.GONE);
                 }
@@ -2507,6 +2519,7 @@ public class OverlayWindow<lytEdit> {
                     notelay.setVisibility(View.VISIBLE);
                 }
 
+
                 if (layCons != null)
                     layCons.setBackgroundColor(ContextCompat.getColor(context, R.color.bgTransHalf));
 
@@ -2520,10 +2533,6 @@ public class OverlayWindow<lytEdit> {
                 }
                 if (notelay.getVisibility() != View.GONE) {
                     notelay.setVisibility(View.GONE);
-                }
-
-                if (txIntegrationName.getVisibility() != View.GONE) {
-                    txIntegrationName.setVisibility(View.GONE);
                 }
                 if (llCrateFlowUpTask.getVisibility() != View.GONE) {
                     llCrateFlowUpTask.setVisibility(View.GONE);
@@ -2541,7 +2550,6 @@ public class OverlayWindow<lytEdit> {
 
     private void hidePopup() {
         if (handler != null && dismissDialogRunnable != null) {
-
             handler.removeCallbacks(dismissDialogRunnable);
         }
         if (expandedView != null) expandedView.setVisibility(View.GONE);
@@ -2669,7 +2677,7 @@ public class OverlayWindow<lytEdit> {
     private String getName(String number) {
         String name = unknown;
         try {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
+
                 Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
                 String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
                 Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
@@ -2681,7 +2689,6 @@ public class OverlayWindow<lytEdit> {
                         name = Utils.checkStr(cursor.getString(indexName));
                     cursor.close();
                 }
-            }
         } catch (Exception ignored) {
         }
         return name;
@@ -2773,33 +2780,13 @@ public class OverlayWindow<lytEdit> {
             mobileNumber = Utils.checkStr(callModel.getPhone());
             txCallUserNumber.setText(mobileNumber);
         }
-        if (txCallUnknownUserNumber != null) {
-            mobileNumber = Utils.checkStr(callModel.getPhone());
-            txCallUnknownUserNumber.setText(mobileNumber);
-        }
         if (textPopup != null) {
-            textPopup.setVisibility(View.VISIBLE);
             if (callModel.getIntegration().isEmpty() && callModel.getIntegration() == null) {
                 textPopup.setText(Utils.getLeadName(callModel.getCustomSource(), convertTime(cm.getCreatedAt())));
             } else {
                 textPopup.setText(Utils.getLeadName(callModel.getIntegration(), convertTime(cm.getCreatedAt())));
             }
         }
-//        if (callModel.getIsPhoneSpam()) {
-//            cardView.setBackgroundResource(R.drawable.bg_feb_spam);
-//            expandedView.setBackgroundResource(R.drawable.bg_lay_spam);
-//            consl.setBackgroundResource(R.drawable.bg_lay_spam);
-//            laychange.setBackgroundResource(R.drawable.bg_squre_spam);
-//            txMakeAsSpam.setText("Spam detected");
-//            txMakeAsSpamInFeb.setText("Spam detected");
-//        } else {
-//            cardView.setBackgroundResource(R.drawable.bg_feb_normal);
-//            expandedView.setBackgroundResource(R.drawable.bg_lay);
-//            laychange.setBackgroundResource(R.drawable.bg_squre_normal);
-//            consl.setBackgroundResource(R.drawable.bg_lay);
-//            txMakeAsSpam.setText("Mark as spam");
-//            txMakeAsSpamInFeb.setText("Mark as spam");
-//        }
 
         ArrayList<LabelModel> labelList = new ArrayList<>();
         List<String> strLabels = new ArrayList<>();
@@ -2819,10 +2806,9 @@ public class OverlayWindow<lytEdit> {
         Log.i("OverlayWindow", "setDataForPopUp: strLabels " + strLabels);
         Log.i("OverlayWindow", "setDataForPopUp: getUser_status " + strStatus);
 
+
         if (!cm.getStatus().isEmpty()) {
             txtEditStatus.setText(cm.getStatus().get(0));
-        } else {
-            txtEditStatus.setText("");
         }
         if (!cm.getLabel().isEmpty()) {
             if (cm.getLabel().size() == 1) {
@@ -2831,8 +2817,6 @@ public class OverlayWindow<lytEdit> {
                 String labelText = cm.getLabel().get(0) + " And " + (cm.getLabel().size() - 1) + " other";
                 txtEditLabel.setText(labelText);
             }
-        } else {
-            txtEditLabel.setText("");
         }
         for (String s : strStatus) {
             boolean matchFound = false;  // To track if a match is found
@@ -3024,9 +3008,8 @@ public class OverlayWindow<lytEdit> {
         //Log.d("here","call api"+mobileNumber);
         txCallerNo.setText(mobileNumber);
         txCallUserNumber.setText(mobileNumber);
-        txCallUnknownUserNumber.setText(mobileNumber);
-//        txCallerName.setText(unknown);
-//        txCallUserName.setText(unknown);
+         txCallerName.setText(unknown);
+         txCallUserName.setText(unknown);
 
         String num = mobileNumber.replace("+91", "");
         try {
@@ -3048,7 +3031,7 @@ public class OverlayWindow<lytEdit> {
                                     layFab.setVisibility(View.GONE);
                                 } else {
                                     cm = null;
-//                                    showFab();
+                                    showFab();
 //                                    chipStatus.setVisibility(View.GONE);
                                     chipRemind.setVisibility(View.GONE);
                                     txtLabelTimeline.setVisibility(View.GONE);
@@ -3075,8 +3058,8 @@ public class OverlayWindow<lytEdit> {
                                 chipRemind.setVisibility(View.GONE);
                                 txStatus.setVisibility(View.GONE);
                                 lytEdit.setVisibility(View.GONE);
-                                textPopup.setVisibility(View.INVISIBLE);
                                 txtLabelTimeline.setVisibility(View.GONE);
+                                showFab();
                                 DEEP_LINK_URL = "sigmacrm://create-lead/" + mobileNumber.replace("+91", "");
                                 icSettings.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.add_white));
                               /*  showSuccess( String.valueOf(e));
@@ -3088,62 +3071,6 @@ public class OverlayWindow<lytEdit> {
                                     }
                                 }, 1500); */
                                 Log.d("Manoj", String.valueOf(e));
-
-                                if (e instanceof HttpException) {
-                                    HttpException httpException = (HttpException) e;
-                                    int statusCode = httpException.code();
-                                    if (statusCode == 404) {
-                                        // Handle 404 error specifically
-                                        Log.e("API Error", "404 Not Found: " + e.getMessage());
-//                                        try {
-//                                            String errorBody = httpException.response().errorBody().string();
-//                                            JSONObject jsonObject = new JSONObject(errorBody);
-//
-//                                            boolean isPhoneSpam = jsonObject.getJSONObject("data").getBoolean("isPhoneSpam");
-//                                            if (!isPhoneSpam) {
-//                                                cardView.setBackgroundResource(R.drawable.bg_feb_normal);
-//                                                expandedView.setBackgroundResource(R.drawable.bg_lay);
-//                                                laychange.setBackgroundResource(R.drawable.bg_squre_normal);
-//                                                consl.setBackgroundResource(R.drawable.bg_lay);
-//                                                txMakeAsSpam.setText("Mark as spam");
-//                                                txMakeAsSpamInFeb.setText("Mark as spam");
-//                                                if (expandedView != null && expandedView.getVisibility() == View.VISIBLE) {
-//                                                    hideFab();
-//                                                } else {
-//                                                    showFab();
-//                                                }
-//                                            } else {
-//                                                if (expandedView != null && expandedView.getVisibility() == View.VISIBLE) {
-//                                                    hideFab();
-//                                                } else {
-//                                                    showFab();
-//                                                }
-//                                                hideFab();
-//                                                cardView.setBackgroundResource(R.drawable.bg_feb_spam);
-//                                                expandedView.setBackgroundResource(R.drawable.bg_lay_spam);
-//                                                consl.setBackgroundResource(R.drawable.bg_lay_spam);
-//                                                laychange.setBackgroundResource(R.drawable.bg_squre_spam);
-//                                                txMakeAsSpam.setText("Spam detected");
-//                                                txMakeAsSpamInFeb.setText("Spam detected");
-//                                            }
-//                                        } catch (Exception ex) {
-//                                            ex.printStackTrace();
-//                                            Log.e("API Error", "Error parsing 404 response: " + ex.getMessage());
-//                                        }
-                                        txCallUserName.setText(unknown + " caller");
-                                        txCallerName.setText(unknown);
-                                        txCallUnknownUserNumber.setVisibility(View.VISIBLE);
-                                        icShareButton.setVisibility(View.GONE);
-                                        txCallUserNumber.setVisibility(View.GONE);
-                                        // Show user-friendly message or take action
-                                    } else {
-                                        // Handle other errors
-                                        Log.e("API Error", "HTTP Error: " + statusCode + " " + e.getMessage());
-                                    }
-                                } else {
-                                    // Handle other types of errors like network issues
-                                    Log.e("API Error", "Other error: " + e.getMessage());
-                                }
                             }
                         }));
             }
@@ -3172,7 +3099,6 @@ public class OverlayWindow<lytEdit> {
                     }
                 }
             }
-
             Log.d("FilesHere", "FileName:" + path + "/" + fileName);
             if (fileName != "") {
                 String mFoundFile = path + "/" + fileName;
@@ -3292,9 +3218,7 @@ public class OverlayWindow<lytEdit> {
                 chipRemind.setVisibility(View.VISIBLE);
                 txStatus.setVisibility(View.VISIBLE);
                 lytEdit.setVisibility(View.VISIBLE);
-                txCallUserNumber.setVisibility(View.VISIBLE);
-                icShareButton.setVisibility(View.VISIBLE);
-                txCallUnknownUserNumber.setVisibility(View.GONE);
+                lytEdit.setVisibility(View.VISIBLE);
                 tvNotes.setVisibility(View.GONE);
                 tvLastCallSinece.setVisibility(View.GONE);
                 if (cm.getRecentTextNote() != null && !cm.getRecentTextNote().isEmpty()) {
@@ -3304,17 +3228,12 @@ public class OverlayWindow<lytEdit> {
                 if (cm.getLastCallSince() != null && !cm.getLastCallSince().isEmpty()) {
                     tvLastCallSinece.setVisibility(View.VISIBLE);
                     tvLastCallSinece.setText("Last Call : " + cm.getLastCallSince());
-                } else {
-                    tvLastCallSinece.setText("Last Call : ");
                 }
                 if (txCallerName != null) {
                     if (!Utils.checkStr(cm.getName()).isEmpty()) {
                         txCallerName.setText(Utils.checkStr(cm.getName()));
                         txStatus.setText(" Remind to make another call with " + cm.getName() + " in");
-                    } else {
-                        txStatus.setText(" Remind to make another call with " + unknown +" caller" + " in");
-                        txCallerName.setText("No Name");
-                    }
+                    } else txCallerName.setText("No Name");
                 }
                 if (txCallerNo != null) {
                     //  mobileNumber = Utils.checkStr(callModel.getNumber());
@@ -3323,10 +3242,8 @@ public class OverlayWindow<lytEdit> {
 
                 if (txIntegrationName != null) {
                     if (cm.getIntegration().isEmpty() && cm.getIntegration() == null) {
-                        txIntegrationName.setVisibility(View.VISIBLE);
                         txIntegrationName.setText(Utils.getLeadName(cm.getCustomSource(), convertTime(cm.getCreatedAt())));
                     } else {
-                        txIntegrationName.setVisibility(View.VISIBLE);
                         txIntegrationName.setText(Utils.getLeadName(cm.getIntegration(), convertTime(cm.getCreatedAt())));
 
                     }
