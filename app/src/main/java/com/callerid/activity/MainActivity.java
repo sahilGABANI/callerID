@@ -188,26 +188,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkCallLogsPerm() {
         try {
-            if (ContextCompat.checkSelfPermission(MainActivity.this,
-                    Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(MainActivity.this,
-                    Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                checkRolePerm();
-                checkOverlayPermissions();
-                checkIgnoreBatteryOptimizations();
-                startService();
-            } else if (!(ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                    Manifest.permission.CALL_PHONE)
-                    && ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                    Manifest.permission.READ_PHONE_STATE))) {
-                reqCallLogsPerm.launch(new String[] { Manifest.permission.CALL_PHONE,
-                        Manifest.permission.READ_PHONE_STATE });
+            // Only proceed if the activity is still valid
+            if (!isFinishing() && (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1 || !isDestroyed())) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                        && ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    checkRolePerm();
+                    checkOverlayPermissions();
+                    checkIgnoreBatteryOptimizations();
+                    startService();
+                } else if (!(ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        Manifest.permission.CALL_PHONE)
+                        && ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        Manifest.permission.READ_PHONE_STATE))) {
+                    reqCallLogsPerm.launch(new String[] { Manifest.permission.CALL_PHONE,
+                            Manifest.permission.READ_PHONE_STATE });
+                }
             }
         } catch (Exception e) {
             Log.e("MainActivity", "Error in checkCallLogsPerm", e);
         }
     }
-
     private final ActivityResultLauncher<String[]> reqCallLogsPerm = registerForActivityResult(
             new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
                 try {
@@ -262,14 +264,18 @@ public class MainActivity extends AppCompatActivity {
     private void checkOverlayPermissions() {
         Log.e("MainActivity", "checkOverlayPermissions:   " + Utils.showDrawOverlays(this));
         if (Utils.showDrawOverlays(this)) {
-            new AlertDialog.Builder(this)
-                    .setCancelable(false)
-                    .setTitle("Overlay Permission")
-                    .setMessage("Need overlay permission")
-                    .setPositiveButton("Ok", (dialogInterface, i) -> {
-                        if (!isFinishing())
-                            overlayResult.launch(Utils.getDrawOverlaysIntent(MainActivity.this));
-                    }).show();
+            // Add check here to prevent crash
+            if (!isFinishing() && !isDestroyed()) {
+                new AlertDialog.Builder(this)
+                        .setCancelable(false)
+                        .setTitle("Overlay Permission")
+                        .setMessage("Need overlay permission")
+                        .setPositiveButton("Ok", (dialogInterface, i) -> {
+                            // Good! This check is already present
+                            if (!isFinishing())
+                                overlayResult.launch(Utils.getDrawOverlaysIntent(MainActivity.this));
+                        }).show();
+            }
         }
     }
 
@@ -291,11 +297,18 @@ public class MainActivity extends AppCompatActivity {
             if (Utils.showIgnoreBatteryOptimizations(MainActivity.this)) {
                 final Intent ignoreBatteryOptimizationsIntent = Utils.getIgnoreBatteryOptimizationsIntent(this);
                 if (ignoreBatteryOptimizationsIntent != null) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setCancelable(false)
-                            .setTitle("Run in background")
-                            .setMessage("Battery Optimizations")
-                            .setPositiveButton("Ok", (dialogInterface, i) -> startActivity(ignoreBatteryOptimizationsIntent)).show();
+                    // Add check here to prevent crash
+                    if (!isFinishing() && (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1 || !isDestroyed())) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setCancelable(false)
+                                .setTitle("Run in background")
+                                .setMessage("Battery Optimizations")
+                                .setPositiveButton("Ok", (dialogInterface, i) -> {
+                                    // Add check here too for safety
+                                    if (!isFinishing())
+                                        startActivity(ignoreBatteryOptimizationsIntent);
+                                }).show();
+                    }
                 }
             }
         } catch (Exception e) {

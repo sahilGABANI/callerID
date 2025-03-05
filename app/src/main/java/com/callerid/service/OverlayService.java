@@ -1,5 +1,6 @@
 package com.callerid.service;
 
+import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL;
 import static android.provider.CallLog.Calls.LIMIT_PARAM_KEY;
 import android.app.ForegroundServiceStartNotAllowedException;
 import android.app.Notification;
@@ -361,7 +362,12 @@ public class OverlayService extends Service implements CallScreeningListener {
         Notification notification = createNotification();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             try {
-                startForeground(1, notification);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                    startForeground(1, notification);
+                } else {
+                    startForeground(1, notification,
+                            FOREGROUND_SERVICE_TYPE_PHONE_CALL);
+                }
             }
             catch (ForegroundServiceStartNotAllowedException e){
                 new Handler(context.getMainLooper()).post(new Runnable() {
@@ -397,8 +403,7 @@ public class OverlayService extends Service implements CallScreeningListener {
                     }
                 });
             }
-        }
-        else {
+        } else {
             try {
                 startForeground(1, notification);
             }
