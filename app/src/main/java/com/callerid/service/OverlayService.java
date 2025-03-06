@@ -68,6 +68,7 @@ public class OverlayService extends Service implements CallScreeningListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                 CallScreenService.setCallScreeningListener(this);
         } catch (Exception ignored) {
+
         }
 
         try {
@@ -132,9 +133,8 @@ public class OverlayService extends Service implements CallScreeningListener {
                     break;
                 case TelephonyManager.CALL_STATE_IDLE:
                     if (prf.getBoolean("callerid", true)) {
-                        Log.d("idle", "number is" + number);
-                        if (number != null && number.length() > 0) {
-                            mobileNumber = Utils.checkStr(number);
+                        Log.d("idle", "number is " + mobileNumber);
+                        if (mobileNumber != null && mobileNumber.length() > 0) {
                             if (prevState == TelephonyManager.CALL_STATE_OFFHOOK) {
                                 prevState = state;
                                 showPopup1(mobileNumber, callType);
@@ -360,54 +360,10 @@ public class OverlayService extends Service implements CallScreeningListener {
 
     private void startForegroundService(Context context) {
         Notification notification = createNotification();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             try {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                    startForeground(1, notification);
-                } else {
-                    startForeground(1, notification,
-                            FOREGROUND_SERVICE_TYPE_PHONE_CALL);
-                }
-            }
-            catch (ForegroundServiceStartNotAllowedException e){
-                new Handler(context.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Context applicationContext = context.getApplicationContext();
-                        Toast.makeText(applicationContext, "ForegroundServiceStartNotAllowedException " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-                Intent i = new Intent(context, StarterServiceActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
-            }
-            catch (RuntimeException e){
-                new Handler(context.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Context applicationContext = context.getApplicationContext();
-                        Toast.makeText(applicationContext, "RuntimeException " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-                Intent i = new Intent(context, StarterServiceActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
-            }
-            catch (Exception e){
-                startForegroundService(context);
-                new Handler(context.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Context applicationContext = context.getApplicationContext();
-                        Toast.makeText(applicationContext, "Exception " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        } else {
-            try {
-                startForeground(1, notification);
-            }
-            catch (RuntimeException e) {
+                startForeground(1, notification, FOREGROUND_SERVICE_TYPE_PHONE_CALL);
+            } catch (RuntimeException e) {
                 new Handler(context.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -419,7 +375,7 @@ public class OverlayService extends Service implements CallScreeningListener {
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
             } catch (Exception e) {
-                startForegroundService(context);
+//                startForegroundService(context);
                 new Handler(context.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -428,6 +384,8 @@ public class OverlayService extends Service implements CallScreeningListener {
                     }
                 });
             }
+        } else {
+            startForeground(1, notification);
         }
     }
 

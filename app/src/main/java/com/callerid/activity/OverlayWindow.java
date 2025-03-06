@@ -3090,7 +3090,7 @@ public class OverlayWindow<lytEdit> {
 
             File directory = new File(path);
             File[] files = directory.listFiles();
-            if (files.length > 0) {
+            if (files != null && files.length > 0) {
                 for (File file : files) {
                     if (file.getName().toLowerCase().contains(currentTime)) {
 
