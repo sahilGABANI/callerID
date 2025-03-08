@@ -130,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
     public static void verifyStoragePermissions(Activity activity) {
         try {
 
-            // Check if we have write permission
             int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             if (permission != PackageManager.PERMISSION_GRANTED) {
                 // We don't ha-ve permission so prompt the user
@@ -138,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
                         activity,
                         PERMISSIONS_STORAGE,
                         REQUEST_EXTERNAL_STORAGE);
-                Log.d("DEBUG", "PERMISSIONS GRANTED PROBABLY");
             }
         } catch (Exception e) {
             Log.e("MainActivity", "Error in verifyStoragePermissions", e);
@@ -189,19 +187,23 @@ public class MainActivity extends AppCompatActivity {
     private void checkCallLogsPerm() {
         try {
             // Only proceed if the activity is still valid
-            if (!isFinishing() && (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1 || !isDestroyed())) {
+            if (!isFinishing() &&  !isDestroyed()) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this,
                         Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
                         && ContextCompat.checkSelfPermission(MainActivity.this,
-                        Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                        Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                        && ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                     checkRolePerm();
                     checkOverlayPermissions();
                     checkIgnoreBatteryOptimizations();
                     startService();
                 } else if (!(ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                        Manifest.permission.CALL_PHONE)
+                        Manifest.permission.CALL_PHONE))
                         && ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                        Manifest.permission.READ_PHONE_STATE))) {
+                        Manifest.permission.READ_PHONE_STATE)
+                        && ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                        Manifest.permission.POST_NOTIFICATIONS)) {
                     reqCallLogsPerm.launch(new String[] { Manifest.permission.CALL_PHONE,
                             Manifest.permission.READ_PHONE_STATE });
                 }
@@ -257,12 +259,13 @@ public class MainActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     isRole = true;
+                    Log.i(TAG, "roleResult: checkCallLogsPerm");
                     checkCallLogsPerm();
                 }
             });
 
     private void checkOverlayPermissions() {
-        Log.e("MainActivity", "checkOverlayPermissions:   " + Utils.showDrawOverlays(this));
+        Log.e("MainActivity", "checkOverlayPermissions: " + Utils.showDrawOverlays(this));
         if (Utils.showDrawOverlays(this)) {
             // Add check here to prevent crash
             if (!isFinishing() && !isDestroyed()) {
@@ -283,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 try {
                     if (result.getResultCode() == Activity.RESULT_OK) {
+                        Log.i(TAG, "overlayResult: checkCallLogsPerm");
                         checkCallLogsPerm();
                     } else {
                         finish();
@@ -320,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         try {
+            Log.i(TAG, "onStart: checkCallLogsPerm");
             checkCallLogsPerm();
 
             if (myToken != "") {

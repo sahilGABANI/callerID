@@ -355,7 +355,7 @@ public class OverlayService extends Service implements CallScreeningListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Ensure your service is started in the foreground to avoid being killed by the OS
         startForegroundService(this);
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     private void startForegroundService(Context context) {
@@ -367,20 +367,21 @@ public class OverlayService extends Service implements CallScreeningListener {
                 new Handler(context.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        Context applicationContext = context.getApplicationContext();
-                        Toast.makeText(applicationContext, "RuntimeException " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                        Context applicationContext = context.getApplicationContext();
+                        Log.e("Service", "RuntimeException", e);
+//                        Toast.makeText(applicationContext, "RuntimeException " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                Intent i = new Intent(context, StarterServiceActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
+//                Intent i = new Intent(context, StarterServiceActivity.class);
+//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                context.startActivity(i);
             } catch (Exception e) {
-//                startForegroundService(context);
                 new Handler(context.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        Context applicationContext = context.getApplicationContext();
-                        Toast.makeText(applicationContext, "Exception " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("Service", "RuntimeException", e);
+//                        Context applicationContext = context.getApplicationContext();
+//                        Toast.makeText(applicationContext, "Exception " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
